@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Work and Energy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F8FB; --grid:#E1E8F0; --ink:#1A2433; --muted:#5B6779; --panel:#FFFFFF; --line:#C8D2DE;
+  --cyan:#5DEBEE; --magenta:#E55ADC; --red:#DE3127; --blue:#2B46D4; --green:#18924A;
+  --copper:#C9773F;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#132039; --grid:#1B2B48; --ink:#E7EDF6; --muted:#9DAAC0; --panel:#192946; --line:#2D4064;
+    --cyan:#47DDE1; --magenta:#F07AE8; --red:#FF5B4F; --blue:#93A6FF; --green:#4FD27F; --copper:#E39461;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#132039; --grid:#1B2B48; --ink:#E7EDF6; --muted:#9DAAC0; --panel:#192946; --line:#2D4064;
+  --cyan:#47DDE1; --magenta:#F07AE8; --red:#FF5B4F; --blue:#93A6FF; --green:#4FD27F; --copper:#E39461;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{
+  margin:0; color:var(--ink); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:26px 26px;
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased;
+}
+i,.m{font-style:italic}
+sub{font-size:.7em}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--magenta);outline-offset:2px;border-radius:3px}
+
+/* nav */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1080px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:18px}
+.toc{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
+.toc::-webkit-scrollbar{display:none}
+.toc a{white-space:nowrap;text-decoration:none;color:var(--muted);font-size:14px;padding:4px 9px;border-radius:6px}
+.toc a:hover{color:var(--ink);background:var(--grid)}
+.toc a span{color:var(--blue);font-weight:700;margin-right:4px}
+.langlink{flex:none;font-size:14px;padding:4px 12px;border:1.5px solid var(--ink);border-radius:8px;color:var(--ink);text-decoration:none}
+.langlink:hover{background:var(--ink);color:var(--paper)}
+
+/* hero */
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.hero{padding:56px 0 28px}
+.credit{font-size:15px;color:var(--muted);margin:0 0 18px;max-width:60ch}
+.credit b{color:var(--ink);font-weight:500}
+h1{font-size:clamp(40px,7vw,78px);line-height:1.04;letter-spacing:-.02em;margin:0;font-weight:700;max-width:14ch}
+.hero p.sub{font-size:19px;max-width:56ch;margin:18px 0 0}
+.hero-wire{width:100%;height:auto;display:block;margin-top:34px}
+.scrawl{color:var(--blue);font-size:15px;font-weight:500;line-height:1.5;border-left:3px solid currentColor;padding:2px 0 2px 12px;max-width:52ch}
+
+/* sections */
+section{padding:56px 0 24px;border-top:1px dashed var(--line)}
+h2{font-size:clamp(26px,3.6vw,36px);line-height:1.15;margin:0 0 14px;letter-spacing:-.01em;display:flex;gap:14px;align-items:baseline}
+h2 .n{font-size:.62em;color:var(--blue);border:2px solid var(--blue);border-radius:50%;width:1.7em;height:1.7em;display:inline-grid;place-items:center;flex:none;transform:translateY(-.15em)}
+.prose{max-width:68ch}
+.prose p{margin:0 0 12px}
+.key{display:inline-flex;flex-wrap:wrap;gap:10px 34px;align-items:center;border:6px solid var(--cyan);border-radius:5px;padding:12px 22px;margin:8px 0 22px;font-size:19px;background:var(--panel)}
+.key span{white-space:nowrap}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.9em;line-height:1.15;margin:0 2px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px}
+
+.sim{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(250px,1fr);gap:18px;background:var(--panel);border:1.5px solid var(--line);border-radius:12px;padding:18px}
+@media (max-width:820px){.sim{grid-template-columns:1fr}}
+.viz{min-width:0;display:flex;flex-direction:column;gap:12px}
+.viz svg,.viz canvas{width:100%;display:block}
+.controls{display:flex;flex-direction:column;gap:12px;min-width:0}
+.ctl label{display:flex;justify-content:space-between;gap:8px;font-size:15px}
+.ctl output{font-variant-numeric:tabular-nums;font-weight:500}
+input[type=range]{width:100%;accent-color:var(--blue);margin:4px 0 0}
+select{font:inherit;font-size:15px;width:100%;padding:6px 8px;border-radius:7px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button,.btn{font:inherit;font-size:14px;padding:5px 11px;border-radius:7px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue);color:var(--panel)}
+.check{display:flex;gap:8px;align-items:center;font-size:15px;cursor:pointer}
+.check input{accent-color:var(--blue);width:17px;height:17px}
+.lbl{font-size:15px;margin-bottom:4px;display:block}
+dl.read{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin:4px 0 0;font-size:15px;border-top:1px solid var(--line);padding-top:10px}
+dl.read dt{color:var(--muted)}
+dl.read dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.verdict{font-size:15px;padding:8px 12px;border-radius:8px;border-left:5px solid var(--magenta);background:color-mix(in srgb,var(--magenta) 10%,transparent)}
+.aside{margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:820px){.aside{grid-template-columns:1fr}}
+.boxed{border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--panel);font-size:16px}
+.boxed h3{margin:0 0 6px;font-size:17px}
+
+.mag{color:var(--magenta)}
+.bars{display:flex;flex-direction:column;gap:7px;font-size:14px}
+.bar-row{display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:8px;align-items:center}
+.bar-track{height:14px;background:var(--grid);border-radius:4px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:4px;transition:width .15s}
+.bar-row .v{text-align:right;font-variant-numeric:tabular-nums}
+.bar-cap{grid-column:1/-1;color:var(--muted);margin-bottom:-4px}
+table.tbl{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
+.tbl th,.tbl td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:right}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.tbl th{color:var(--muted);font-weight:500}
+.eq{font-size:16px;line-height:1.7}
+.eq .sum{font-weight:700}
+.small{font-size:14px;color:var(--muted)}
+footer{padding:40px 0 60px;border-top:1px dashed var(--line);margin-top:40px;color:var(--muted);font-size:15px}
+svg text{font-family:"IBM Plex Sans KR",system-ui,sans-serif;fill:var(--ink)}
+svg .wire{stroke:var(--ink);stroke-width:2.2;fill:none;stroke-linejoin:round}
+svg .flow{stroke:var(--red);stroke-width:5;fill:none;stroke-linecap:round;stroke-dasharray:0.1 15}
+svg .axis{stroke:var(--muted);stroke-width:1.2}
+svg .gridl{stroke:var(--grid);stroke-width:1}
+@media (prefers-reduced-motion:reduce){.bar-fill{transition:none}}
+
+.hero-curve{width:100%;height:auto;display:block;margin-top:30px}
+.hero-curve .q{stroke:var(--blue);stroke-width:3.5;fill:none;stroke-dasharray:1400;stroke-dashoffset:1400;animation:draw 2.6s cubic-bezier(.3,.6,.4,1) .3s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.hero-curve .q{animation:none;stroke-dashoffset:0}}
+.stack{display:flex;height:16px;border-radius:4px;overflow:hidden;background:var(--grid)}
+.stack div{height:100%;transition:width .08s linear}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:14px;color:var(--muted)}
+.legend i.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;font-style:normal}
+.pill{font-size:14px;padding:6px 10px;border-radius:8px;background:color-mix(in srgb,var(--blue) 10%,transparent);border-left:4px solid var(--blue)}
+.sim.one{grid-template-columns:minmax(0,1fr) minmax(250px,.8fr)}
+@media (max-width:820px){.sim.one{grid-template-columns:1fr}}
+
+.sqrt{display:inline-block;position:relative;padding-left:.6em;margin-left:.06em;white-space:nowrap}
+.sqrt::before{content:"";position:absolute;left:0;top:0;bottom:.02em;width:.63em;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14.2L3.4 12.3L6.9 20.1L11 0H12V1.5H11.95L7.5 23.6H6.3L2.8 15.3L.7 16.3Z'/%3E%3C/svg%3E") no-repeat 0 0/100% 100%;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14.2L3.4 12.3L6.9 20.1L11 0H12V1.5H11.95L7.5 23.6H6.3L2.8 15.3L.7 16.3Z'/%3E%3C/svg%3E") no-repeat 0 0/100% 100%}
+.sqrt>span{display:inline-block;border-top:.075em solid currentColor;padding:.1em .1em 0 .05em;line-height:1.15}
+.ss{display:inline-block;vertical-align:-.3em;line-height:1;font-size:.72em;margin-left:.03em;text-align:left}
+.ss>sup,.ss>sub{display:block;vertical-align:0;font-size:1em;line-height:1.08;position:static}
+
+.hero-en{width:100%;height:auto;display:block;margin-top:24px}
+.toc a{padding:4px 7px}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap}
+.ctl.off{opacity:.4;pointer-events:none}
+.key{max-width:100%}
+@media (max-width:600px){.key>span{white-space:normal;min-width:0}}
+</style>
+</head>
+<body>
+<nav class="bar" aria-label="Sections"><div class="bar-in"><div class="toc" id="toc"></div>
+<a class="langlink" href="energy-ko.html" hreflang="ko" lang="ko">한국어</a></div></nav>
+
+<header class="wrap hero">
+  <p class="credit" data-i18n="credit"></p>
+  <h1 data-i18n="title"></h1>
+  <p class="sub" data-i18n="subtitle"></p>
+  <svg class="hero-en" id="hero" viewBox="0 0 1000 220" aria-hidden="true"></svg>
+</header>
+
+<main class="wrap">
+
+<section id="s1"><h2><span class="n">1</span><span data-i18n="h1"></span></h2>
+  <div class="prose"><p data-i18n="p1"></p></div>
+  <div class="key"><span><i>W</i> = <b>F</b> · Δ<b>r</b> = <i>F</i>Δ<i>r</i> cos <i>θ</i></span><span>[<i>W</i>] = [<i>F</i>][<i>L</i>] = <i>M</i>(<i>L</i>/<i>T</i>)<sup>2</sup></span><span>1 J = 1 kg·m<sup>2</sup>/s<sup>2</sup></span></div>
+  <div class="sim"><div class="viz"><svg id="v1" viewBox="0 0 440 230" role="img" aria-label="A force at an angle doing work on a block"></svg></div><div class="controls" id="c1"></div></div>
+</section>
+
+<section id="s2"><h2><span class="n">2</span><span data-i18n="h2"></span></h2>
+  <div class="prose"><p data-i18n="p2"></p></div>
+  <div class="key"><span><i>W</i> = ∫<span class='ss'><sup><b>r</b><sub>f</sub></sup><sub><b>r</b><sub>i</sub></sub></span> <b>F</b>(<b>r</b>) · d<b>r</b></span><span><i>W</i> = ∫<span class='ss'><sup><i>x</i><sub>f</sub></sup><sub><i>x</i><sub>i</sub></sub></span> <i>F</i>(<i>x</i>) d<i>x</i> = <span data-i18n="areaUnder"></span></span></div>
+  <div class="sim"><div class="viz"><svg id="v2" viewBox="0 0 440 240" role="img" aria-label="Work as the area under F(x)"></svg></div><div class="controls" id="c2"></div></div>
+</section>
+
+<section id="s3"><h2><span class="n">3</span><span data-i18n="h3"></span></h2>
+  <div class="prose"><p data-i18n="p3"></p></div>
+  <div class="key"><span><i>W</i> = ∫<i>F</i> d<i>x</i> = ∫<i>m</i><span class="frac"><span>d<i>v</i></span><span>d<i>t</i></span></span>d<i>x</i> = ∫<i>mv</i> d<i>v</i></span><span><i>W</i> = (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>f</sub></span> − (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>i</sub></span> = Δ<i>K</i></span><span><i>K</i> = (1/2)<i>mv</i><sup>2</sup></span></div>
+  <div class="sim"><div class="viz"><svg id="v3" viewBox="0 0 440 150" role="img" aria-label="A force changing the kinetic energy of a block"></svg><div class="bars" id="bars3"></div></div><div class="controls" id="c3"></div></div>
+  <div class="aside"><div class="boxed"><h3 data-i18n="arH"></h3><div data-i18n="arP"></div></div></div>
+</section>
+
+<section id="s4"><h2><span class="n">4</span><span data-i18n="h4"></span></h2>
+  <div class="prose"><p data-i18n="p4a"></p><p data-i18n="p4b"></p></div>
+  <div class="key"><span><i>W</i><sub>g</sub> = <i>mgd</i> cos <i>φ</i></span><span><i>v</i><sub>f</sub> = <span class='sqrt'><span><i>v</i><span class='ss'><sup>2</sup><sub>i</sub></span> ± 2<i>gd</i></span></span></span><span><i>W</i><sub>a</sub> + <i>W</i><sub>g</sub> = Δ<i>K</i> = 0 ⇒ <i>W</i><sub>a</sub> = <i>mgd</i></span></div>
+  <div class="sim"><div class="viz"><svg id="v4" viewBox="0 0 440 280" role="img" aria-label="Work done by gravity"></svg></div><div class="controls" id="c4"></div></div>
+</section>
+
+<section id="s5"><h2><span class="n">5</span><span data-i18n="h5"></span></h2>
+  <div class="prose"><p data-i18n="p5a"></p><p data-i18n="p5b"></p></div>
+  <div class="key"><span><b>F</b><sub>s</sub> = −<i>k</i><b>d</b></span><span><i>W</i><sub>s</sub> = ∫<span class='ss'><sup><i>x</i><sub>f</sub></sup><sub><i>x</i><sub>i</sub></sub></span> (−<i>kx</i>) d<i>x</i> = (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>i</sub></span> − (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>f</sub></span></span><span>[<i>k</i>] = N/m = kg/s<sup>2</sup></span></div>
+  <div class="sim"><div class="viz"><svg id="v5" viewBox="0 0 440 300" role="img" aria-label="Work done by a spring"></svg></div><div class="controls" id="c5"></div></div>
+</section>
+
+<section id="s6"><h2><span class="n">6</span><span data-i18n="h6"></span></h2>
+  <div class="prose"><p data-i18n="p6"></p></div>
+  <div class="key"><span><i>P</i><sub>avg</sub> = <span class="frac"><span><i>W</i></span><span>Δ<i>t</i></span></span></span><span><i>P</i> = <span class="frac"><span>d<i>W</i></span><span>d<i>t</i></span></span> = <b>F</b> · <b>v</b></span><span>1 W = 1 J/s, &nbsp;1 kWh = 3.6 × 10<sup>6</sup> J</span></div>
+  <div class="sim"><div class="viz"><svg id="v6" viewBox="0 0 440 260" role="img" aria-label="A motor lifting a crate"></svg></div><div class="controls" id="c6"></div></div>
+</section>
+
+<section id="s7"><h2><span class="n">7</span><span data-i18n="h7"></span></h2>
+  <div class="prose"><p data-i18n="p7a"></p><p data-i18n="p7b"></p></div>
+  <div class="key"><span>Δ<i>U</i> = −<i>W</i></span><span>∮ <b>F</b> · d<b>r</b> = 0</span><span><i>W</i><sub>ab,1</sub> = −<i>W</i><sub>ba,2</sub> = <i>W</i><sub>ab,2</sub></span><span>Δ<i>U</i> = −∫<span class='ss'><sup><i>x</i><sub>f</sub></sup><sub><i>x</i><sub>i</sub></sub></span> <i>F</i>(<i>x</i>) d<i>x</i></span></div>
+  <div class="sim"><div class="viz"><svg id="v7" viewBox="0 0 440 280" role="img" aria-label="Work along two different paths"></svg></div><div class="controls" id="c7"></div></div>
+</section>
+
+<section id="s8"><h2><span class="n">8</span><span data-i18n="h8"></span></h2>
+  <div class="prose"><p data-i18n="p8a"></p><p data-i18n="p8b"></p></div>
+  <div class="key"><span><i>U</i>(<i>y</i>) = <i>mgy</i></span><span><i>U</i>(<i>x</i>) = (1/2)<i>kx</i><sup>2</sup></span><span><i>E</i><sub>mec</sub> = <i>K</i> + <i>U</i></span><span>Δ<i>K</i> + Δ<i>U</i> = 0</span><span><i>v</i> = <span class='sqrt'><span>2<i>gh</i></span></span></span></div>
+  <div class="sim"><div class="viz"><svg id="v8" viewBox="0 0 440 250" role="img" aria-label="Pendulum exchanging kinetic and potential energy"></svg><svg id="v8p" viewBox="0 0 440 170" role="img" aria-label="Energy versus time"></svg></div><div class="controls" id="c8"></div></div>
+</section>
+
+<section id="s9"><h2><span class="n">9</span><span data-i18n="h9"></span></h2>
+  <div class="prose"><p data-i18n="p9"></p></div>
+  <div class="key"><span><i>mgh</i> = (1/2)<i>mv</i><sup>2</sup> ⇒ <i>v</i> = <span class='sqrt'><span>2<i>gh</i></span></span></span><span><i>v</i>(<i>y</i>) = <span class='sqrt'><span>2<i>g</i>(<i>h</i><sub>0</sub> − <i>y</i>)</span></span></span></div>
+  <div class="sim"><div class="viz"><svg id="v9" viewBox="0 0 440 260" role="img" aria-label="Ball rolling on a frictionless track"></svg><div class="bars" id="bars9"></div></div><div class="controls" id="c9"></div></div>
+</section>
+
+<section id="s10"><h2><span class="n">10</span><span data-i18n="h10"></span></h2>
+  <div class="prose"><p data-i18n="p10a"></p><p data-i18n="p10b"></p></div>
+  <div class="key"><span><i>W</i> = <i>F</i>(<i>x</i>)Δ<i>x</i> = −Δ<i>U</i>(<i>x</i>)</span><span><i>F</i>(<i>x</i>) = −<span class="frac"><span>d<i>U</i>(<i>x</i>)</span><span>d<i>x</i></span></span></span><span><i>U</i> = (1/2)<i>kx</i><sup>2</sup> → <i>F</i> = −<i>kx</i></span><span><i>U</i> = <i>mgy</i> → <i>F</i> = −<i>mg</i></span></div>
+  <div class="sim"><div class="viz"><svg id="v10" viewBox="0 0 440 360" role="img" aria-label="A potential energy curve and its force"></svg></div><div class="controls" id="c10"></div></div>
+</section>
+
+<section id="s11"><h2><span class="n">11</span><span data-i18n="h11"></span></h2>
+  <div class="prose"><p data-i18n="p11a"></p><p data-i18n="p11b"></p></div>
+  <div class="key"><span>(<i>F</i> − <i>f</i><sub>k</sub>)<i>d</i> = (1/2)<i>mv</i><sup>2</sup> − (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>0</sub></span></span><span><i>W</i> = <i>Fd</i> = Δ<i>E</i><sub>mec</sub> + Δ<i>E</i><sub>th</sub></span><span>Δ<i>E</i><sub>th</sub> = <i>f</i><sub>k</sub><i>d</i></span><span><i>W</i> = Δ<i>E</i> = Δ<i>E</i><sub>mec</sub> + Δ<i>E</i><sub>th</sub> + Δ<i>E</i><sub>int</sub></span><span><i>P</i> = <span class="frac"><span>d<i>E</i></span><span>d<i>t</i></span></span></span></div>
+  <div class="sim"><div class="viz"><svg id="v11" viewBox="0 0 440 150" role="img" aria-label="Pushing a block against friction"></svg><div class="bars" id="bars11"></div></div><div class="controls" id="c11"></div></div>
+</section>
+</main>
+<footer class="wrap"><p data-i18n="credit"></p></footer>
+
+<script>
+const I18N={
+en:{
+ nav:["Work","Variable force","Kinetic energy","Gravity's work","Spring's work","Power","Conservative forces","Energy conservation","Frictionless track","Reading U(x)","Friction & heat"],
+ credit:"Created by <b>Claude Opus 5.5</b>, based on the lecture notes by <b>Sang Hoon Lee (이상훈)</b>.",
+ title:"Work and energy",
+ subtitle:"Work, kinetic energy, potential energy, and the conservation of energy. Move any control and every number on the page is recomputed on the spot.",
+ play:"Play",pause:"Pause",reset:"Start again",mass:"Mass <i>m</i>",
+ h1:"Work",
+ p1:"If a force <b>F</b> acts on an object while it moves by a displacement Δ<b>r</b>, the force does work <i>W</i> = <b>F</b> · Δ<b>r</b> = <i>F</i>Δ<i>r</i> cos <i>θ</i> on it. (For now, assume the force stays the same.) Work is a scalar, the dot product of two vectors, and only the component of the force along the displacement contributes. When <i>θ</i> &gt; π/2, the work is negative. The dimension of work is [force][length] = <i>M</i>(<i>L</i>/<i>T</i>)<sup>2</sup>, the dimension of energy, and its SI unit is the joule, J = kg·m<sup>2</sup>/s<sup>2</sup>. (1 cal = 4.186 J is the energy needed to raise 1 g of water by 1 °C.)",
+ FF:"Force <i>F</i>",ang:"Angle <i>θ</i> between <b>F</b> and Δ<b>r</b>",dd:"Displacement Δ<i>r</i>",
+ rW1:"<i>W</i> = <i>F</i>Δ<i>r</i> cos <i>θ</i>",rPar:"Component along Δ<b>r</b>, <i>F</i> cos <i>θ</i>",rPerp:"Component that does no work, <i>F</i> sin <i>θ</i>",rSign:"The work is",pos:"positive",neg:"negative",zero:"zero",
+ h2:"Work done by a varying force",
+ p2:"If the force changes during the motion, add up the work over small steps: <i>W</i> = ∫<b>F</b>(<b>r</b>) · d<b>r</b>. In one dimension, <i>W</i> = ∫<i>F</i>(<i>x</i>) d<i>x</i> is the area under the <i>F</i>(<i>x</i>) curve between <i>x</i><sub>i</sub> and <i>x</i><sub>f</sub>, counted negative where <i>F</i> &lt; 0. If <b>F</b> does not depend on <b>r</b>, it comes out of the integral and the result is just <b>F</b> · Δ<b>r</b>, the area of a rectangle.",
+ areaUnder:"area under F(x)",shape:"Force",sConst:"constant",sLin:"linear",sBump:"varying",xi:"Start <i>x</i><sub>i</sub>",xf:"End <i>x</i><sub>f</sub>",
+ rArea:"Area under the curve (numerical)",rRect:"Constant-force check <i>F</i>Δ<i>x</i>",
+ h3:"Kinetic energy and the work–kinetic energy theorem",
+ p3:"The work done on an object changes its state of motion. With <i>F</i> = <i>ma</i> = <i>m</i> d<i>v</i>/d<i>t</i> and d<i>x</i> = <i>v</i> d<i>t</i>, <i>W</i> = ∫<i>F</i> d<i>x</i> = ∫<i>m</i>(d<i>v</i>/d<i>t</i>) d<i>x</i> = ∫<i>mv</i> d<i>v</i> = (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>f</sub></span> − (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>i</sub></span>, where <i>v</i><sub>i</sub> and <i>v</i><sub>f</sub> are the speeds at the start and the end. So work changes the quantity (1/2)<i>mv</i><sup>2</sup>, which we call the kinetic energy <i>K</i> (usually written <i>K</i>). This is the work–kinetic energy theorem: <i>W</i> = Δ<i>K</i>.",
+ arH:"Action and reaction",arP:"Taking action and reaction into account, the work your hand does on an object, <b>F</b> · <b>d</b>, equals minus the work the object does on your hand, −(−<b>F</b> · <b>d</b>). If A does negative work on B, then B does positive work on A.",
+ vi:"Initial speed <i>v</i><sub>i</sub>",Fs:"Force <i>F</i> (negative: against the motion)",
+ rW3:"Work <i>W</i> = <i>Fd</i>",rKi:"<i>K</i><sub>i</sub> = (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>i</sub></span>",rKf:"<i>K</i><sub>f</sub> = <i>K</i><sub>i</sub> + <i>W</i>",rVf:"Final speed <i>v</i><sub>f</sub>",stopsAt:"stops after ",bKi:"<i>K</i><sub>i</sub>",bW:"Work <i>W</i>",bKf:"<i>K</i><sub>f</sub>",
+ h4:"Work done by gravity",
+ p4a:"Gravity <i>m</i><b>g</b> is constant, so for a displacement <b>d</b> it does work <i>W</i><sub>g</sub> = <i>mgd</i> cos <i>φ</i>, where <i>φ</i> is the angle between the displacement and gravity. Moving up by <i>d</i> (<i>φ</i> = π = 180°), <i>W</i><sub>g</sub> = −<i>mgd</i>: the kinetic energy drops by <i>mgd</i> and the object slows down. Moving down by <i>d</i> (<i>φ</i> = 0), <i>W</i><sub>g</sub> = <i>mgd</i>: the kinetic energy grows by <i>mgd</i> and the object speeds up. So (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>f</sub></span> = (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>i</sub></span> ± <i>mgd</i> and <i>v</i><sub>f</sub> = <span class='sqrt'><span><i>v</i><span class='ss'><sup>2</sup><sub>i</sub></span> ± 2<i>gd</i></span></span>, the result we found with kinematics, now obtained without it.",
+ p4b:"Lifting an object by <i>d</i> with your hand, if it is at rest just before and just after, Δ<i>K</i> = <i>K</i><sub>f</sub> − <i>K</i><sub>i</sub> = 0. Gravity does <i>W</i><sub>g</sub> = −<i>mgd</i> and the applied force does <i>W</i><sub>a</sub> = <i>Fd</i>, so <i>W</i><sub>a</sub> + <i>W</i><sub>g</sub> = 0 and <i>F</i> = <i>mg</i>: your hand does positive work, gravity negative work. (Strictly, with <i>F</i> = <i>mg</i> it would not move; with a tiny imbalance it rises very slowly.) Lowering an object by <i>d</i> the same way, again <i>W</i><sub>a</sub> + <i>W</i><sub>g</sub> = 0, but now <i>W</i><sub>g</sub> = <i>mgd</i> and <i>W</i><sub>a</sub> = −<i>Fd</i>: your hand does negative work.",
+ mode4:"Situation",up:"Thrown up",down:"Moving down",lift:"Lifted slowly by hand",lower:"Lowered slowly by hand",d4:"Distance <i>d</i>",
+ rWg:"<i>W</i><sub>g</sub>",rWa:"<i>W</i><sub>a</sub> (your hand)",rDK:"Δ<i>K</i>",rVf4:"<i>v</i><sub>f</sub>",noReach:"does not reach: stops after ",
+ h5:"Work done by a spring",
+ p5a:"Many forces in everyday life have the same mathematical form as a spring force, so the results here apply widely. At equilibrium (<i>x</i> = 0) the spring exerts no force. Stretched or compressed by <b>d</b> from equilibrium, it exerts a restoring force that tries to return it to its original length: <b>F</b><sub>s</sub> = −<i>k</i><b>d</b> (Hooke's law), where <i>k</i> is the spring constant, in N/m = kg/s<sup>2</sup>. When the block moves from <i>x</i><sub>i</sub> to <i>x</i><sub>f</sub>, the force depends on position, so <i>W</i><sub>s</sub> = ∫(−<i>kx</i>) d<i>x</i> = (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>i</sub></span> − (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>f</sub></span>.",
+ p5b:"If the spring moves farther from equilibrium (|<i>x</i><sub>i</sub>| &lt; |<i>x</i><sub>f</sub>|), <i>W</i><sub>s</sub> &lt; 0: the spring does negative work on the block (and the block does positive work on the spring), so the block's kinetic energy, and its speed, decrease. If it moves closer to equilibrium, <i>W</i><sub>s</sub> &gt; 0 and the block speeds up. If you hold the block with an applied force <b>F</b><sub>a</sub> so it is at rest before and after, <i>K</i><sub>f</sub> − <i>K</i><sub>i</sub> = 0 = <i>W</i><sub>a</sub> + <i>W</i><sub>s</sub>, so <b>F</b><sub>a</sub> = −<b>F</b><sub>s</sub>. Note that the spring's force on the block and the block's force on the spring are an action–reaction pair, while <b>F</b><sub>a</sub> and <b>F</b><sub>s</sub> just happen to be equal and opposite.",
+ kk:"Spring constant <i>k</i>",xi5:"Start <i>x</i><sub>i</sub>",xf5:"End <i>x</i><sub>f</sub>",
+ rFi:"Force at <i>x</i><sub>i</sub>, −<i>kx</i><sub>i</sub>",rFf:"Force at <i>x</i><sub>f</sub>, −<i>kx</i><sub>f</sub>",rWs:"<i>W</i><sub>s</sub> = (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>i</sub></span> − (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>f</sub></span>",rMean:"Effect on the block",slower:"slows down (W < 0)",faster:"speeds up (W > 0)",same:"no change (W = 0)",gF5:"F(x) = −kx, shaded area = W",
+ h6:"Power",
+ p6:"Power is the rate at which a force does work. If a force does work <i>W</i> in a time Δ<i>t</i>, the average power is <i>P</i><sub>avg</sub> = <i>W</i>/Δ<i>t</i>; in the limit, the instantaneous power is <i>P</i> = d<i>W</i>/d<i>t</i>, so <i>W</i> = ∫<i>P</i> d<i>t</i>. The unit is J/s = W (watt), and work can also be measured in units of power × time. Electrical energy is usually measured in kWh, the work done using 1000 W for one hour, a much larger unit. Because d<i>W</i> = <b>F</b> · d<b>r</b>, with <b>F</b> constant over the short time d<i>t</i>, <i>P</i> = <b>F</b> · d<b>r</b>/d<i>t</i> = <b>F</b> · <b>v</b>: a force acting on an object moving with velocity <b>v</b> does this much work per second.",
+ mC:"Crate mass <i>m</i>",vC:"Lifting speed <i>v</i>",hC:"Lift height <i>h</i>",
+ rP6:"Power <i>P</i> = <b>F</b> · <b>v</b> = <i>mgv</i>",rT6:"Time <i>h</i>/<i>v</i>",rW6:"Work <i>W</i> = <i>mgh</i> = <i>P</i>Δ<i>t</i>",rKwh:"in kWh",wSoFar:"Work so far",
+ h7:"Potential energy and conservative forces",
+ p7a:"Raise an object of mass <i>m</i> by a height <i>h</i> and it gains the ability to do work <i>mgh</i> (we did this calculation when we learned about kinetic energy). This is potential energy, here due to gravity. The work −<i>W</i> that the object does is stored in the system that includes the object. With this idea, we can explain where work is “stored” in the relation between work and kinetic energy, and how it turns back into kinetic energy: Δ<i>U</i> = −<i>W</i> = −Δ<i>K</i>, so Δ<i>U</i> + Δ<i>K</i> = 0. Raising by <i>h</i>, <i>W</i> = −<i>mgh</i> and Δ<i>U</i> = <i>mgh</i>; lowering by <i>h</i>, Δ<i>U</i> = −<i>mgh</i>. The same works for a spring: stretched, the spring's negative work stores elastic potential energy, which turns back into kinetic energy when the block is pulled back.",
+ p7b:"In general a system has two or more objects, and a force acts between an object and the rest of the system. When the configuration changes, the force does work <i>W</i><sub>1</sub> and energy is transferred between the kinetic energy and another form. If reversing the change makes the force do work <i>W</i><sub>2</sub> with <i>W</i><sub>1</sub> = −<i>W</i><sub>2</sub> always, that other form is potential energy and the force is conservative (examples: gravity, spring force). Only then can we define a potential energy. A conservative force does zero net work around any closed path, so the work from a to b is the same along any path: <i>W</i><sub>ab,1</sub> = <i>W</i><sub>ab,2</sub>, and Δ<i>U</i> = −∫<i>F</i>(<i>x</i>) d<i>x</i> does not depend on the path. Kinetic friction and drag are non-conservative: sliding a block on a rough floor turns its kinetic energy into thermal energy (the block warms up) by the random motion of atoms and molecules, and that transfer cannot be reversed (the second law of thermodynamics, later).",
+ force7:"Force",grav:"Gravity (conservative)",fric:"Kinetic friction (non-conservative)",det:"How far path 2 detours",
+ rW71:"Work along path 1 (a → b)",rW72:"Work along path 2 (a → b)",rLoop:"Round trip: a → b by 1, back by 2",rL7:"Path lengths 1, 2",
+ h8:"Conservation of mechanical energy",
+ p8a:"For gravity, Δ<i>U</i> = −∫(−<i>mg</i>) d<i>y</i> = <i>mg</i>(<i>y</i><sub>f</sub> − <i>y</i><sub>i</sub>) = <i>mg</i>Δ<i>y</i>: <i>U</i> grows going up and drops going down. Only the change Δ<i>U</i> has meaning, so the reference point can be chosen freely; with <i>U</i> = 0 at <i>y</i> = 0, <i>U</i> = <i>mgy</i>. (Gravitational potential energy depends only on height relative to the reference, not on horizontal position.) For a spring, Δ<i>U</i> = −∫(−<i>kx</i>) d<i>x</i> = (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>f</sub></span> − (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>i</sub></span>, and with <i>U</i> = 0 at <i>x</i> = 0, <i>U</i>(<i>x</i>) = (1/2)<i>kx</i><sup>2</sup>.",
+ p8b:"In an isolated system where only conservative forces transfer energy, Δ<i>K</i> = <i>W</i> and Δ<i>U</i> = −<i>W</i>, so Δ<i>K</i> + Δ<i>U</i> = Δ(<i>K</i> + <i>U</i>) = 0: the mechanical energy <i>E</i><sub>mec</sub> = <i>K</i> + <i>U</i> does not change. This is the conservation of mechanical energy, and it makes many problems that are hard with Newton's laws alone easy. Free fall, two ways: (1) with constant acceleration, <i>v</i> = <i>gt</i> and <i>h</i> = (1/2)<i>gt</i><sup>2</sup>, so <i>v</i> = <i>g</i><span class='sqrt'><span>2<i>h</i>/<i>g</i></span></span> = <span class='sqrt'><span>2<i>gh</i></span></span>; (2) <i>mgh</i> at the top turns completely into (1/2)<i>mv</i><sup>2</sup> at the bottom, so <i>v</i> = <span class='sqrt'><span>2<i>gh</i></span></span>. The two agree! A pendulum (which we will study with oscillations) trades the two back and forth: at the turning points the kinetic energy is 0 and the potential energy is largest; at the lowest point the kinetic energy is largest.",
+ len:"Length <i>L</i>",th0:"Release angle <i>θ</i><sub>0</sub>",
+ rK8:"<i>K</i> now",rU8:"<i>U</i> now (zero at the lowest point)",rE8:"<i>E</i><sub>mec</sub> = <i>K</i> + <i>U</i>",rVb:"Speed at the bottom <span class='sqrt'><span>2<i>gL</i>(1 − cos <i>θ</i><sub>0</sub>)</span></span>",gE8:"K (blue), U (red), K + U (magenta)",
+ h9:"A frictionless track",
+ p9:"A block starts at rest at height <i>h</i> and slides down a frictionless track of any shape. Watch the speed at a point a height <i>h</i> below the start. Calculating this with forces would be messy (the normal force always acts perpendicular to the direction of motion, so it does no work, but it keeps changing), yet with energy conservation it is as simple as free fall: <i>mgh</i> = (1/2)<i>mv</i><sup>2</sup>, so <i>v</i> = <span class='sqrt'><span>2<i>gh</i></span></span>, whatever the shape. (A real track has friction, so it is not quite that simple, but in the ideal case it is.) A conservative force does the same work along any path, so a hard path can be replaced by an easy one. If a hill is taller than the starting height, the block cannot get over it and slides back.",
+ h0:"Starting height <i>h</i><sub>0</sub>",hill:"Height of the hill",
+ rY9:"Height <i>y</i> now",rV9:"Speed <span class='sqrt'><span>2<i>g</i>(<i>h</i><sub>0</sub> − <i>y</i>)</span></span>",rVlow:"Speed at the lowest point",bK:"Kinetic energy <i>K</i>",bU:"Potential energy <i>U</i>",
+ h10:"Reading a potential energy curve",
+ p10a:"When only conservative forces act on a particle moving along the <i>x</i> axis (one-dimensional motion), the work done as it moves by Δ<i>x</i> is <i>W</i> = <i>F</i>(<i>x</i>)Δ<i>x</i> = −Δ<i>U</i>(<i>x</i>), with <i>F</i> nearly constant over Δ<i>x</i>. Taking the limit, <i>F</i>(<i>x</i>) = −d<i>U</i>/d<i>x</i>, the reverse of Δ<i>U</i> = −∫<i>F</i> d<i>x</i>. For a spring, <i>U</i> = (1/2)<i>kx</i><sup>2</sup> gives <i>F</i> = −<i>kx</i> (Hooke's law); for gravity near the Earth's surface, <i>U</i> = <i>mgy</i> gives <i>F</i> = −<i>mg</i>. So the force is minus the slope of the <i>U</i>(<i>x</i>) curve.",
+ p10b:"Where d<i>U</i>/d<i>x</i> = 0, <i>F</i>(<i>x</i>) = 0: an equilibrium point. At a minimum of <i>U</i>, moving a little in the + direction gives <i>F</i> &lt; 0 and in the − direction <i>F</i> &gt; 0, so the particle is pushed back: a stable equilibrium (like <i>x</i> = 0 for Hooke's law). At a maximum, a small push sends it away: an unstable equilibrium. If <i>U</i>(<i>x</i>) = <i>mgy</i>(<i>x</i>), the curve is literally the shape of a frictionless hillside, and the particle's horizontal motion is like a ball rolling on it, which makes stable and unstable equilibrium easy to picture. The particle can only be where <i>K</i> = <i>E</i><sub>mec</sub> − <i>U</i>(<i>x</i>) ≥ 0, and it turns back where <i>U</i> = <i>E</i><sub>mec</sub>.",
+ x0:"Release point <i>x</i><sub>0</sub> (at rest)",
+ rE10:"<i>E</i><sub>mec</sub> = <i>U</i>(<i>x</i><sub>0</sub>)",rX10:"Position <i>x</i>",rK10:"<i>K</i> = <i>E</i><sub>mec</sub> − <i>U</i>(<i>x</i>)",rF10:"<i>F</i> = −d<i>U</i>/d<i>x</i>",stable:"stable",unstable:"unstable",gU:"U(x) and the energy line E_mec",gF:"F(x) = −dU/dx",
+ h11:"Work by an external force, friction, and total energy",
+ p11a:"A positive or negative <i>W</i> done on a system by an outside force is an idea that will be important in thermodynamics. Without friction, the work done by an outside force <b>F</b> on a block–floor system increases the system's energy (here, with no potential energy, its kinetic energy). With kinetic friction <i>f</i><sub>k</sub>, moving a distance <i>d</i> to the right: <i>F</i> − <i>f</i><sub>k</sub> = <i>ma</i>, Δ<i>v</i> = (<i>F</i> − <i>f</i><sub>k</sub>)<i>t</i>/<i>m</i>, <i>d</i> = <i>v</i><sub>0</sub><i>t</i> + (<i>F</i> − <i>f</i><sub>k</sub>)<i>t</i><sup>2</sup>/2<i>m</i>, so (<i>F</i> − <i>f</i><sub>k</sub>)<i>d</i> = (1/2)<i>mv</i><sup>2</sup> − (1/2)<i>mv</i><span class='ss'><sup>2</sup><sub>0</sub></span>. Then <i>Fd</i> = Δ<i>K</i> + <i>f</i><sub>k</sub><i>d</i> = Δ<i>E</i><sub>mec</sub> + Δ<i>E</i><sub>th</sub>: the work from outside goes into mechanical energy plus thermal energy, Δ<i>E</i><sub>th</sub> = <i>f</i><sub>k</sub><i>d</i>, the heat from sliding. Mechanical energy can turn into thermal energy, but not completely back (the second law of thermodynamics, later).",
+ p11b:"Extending the conservation of mechanical energy gives the conservation of total energy, which will connect to the first law of thermodynamics: the total energy of a system can change only by the amount of energy transferred to or from it, <i>W</i> = Δ<i>E</i> = Δ<i>E</i><sub>mec</sub> + Δ<i>E</i><sub>th</sub> + Δ<i>E</i><sub>int</sub>, where Δ<i>E</i><sub>int</sub> covers every other form of internal energy. For an isolated system with no energy transfer, Δ<i>E</i> = 0. The earlier conservation of mechanical energy is the special case with no non-conservative forces (like kinetic friction) inside an isolated system, so Δ<i>E</i><sub>th</sub> = 0, Δ<i>E</i><sub>int</sub> = 0 and Δ<i>E</i><sub>mec</sub> = 0. Power, defined earlier as the rate at which a force does work, more generally is the rate at which energy is transferred from one form to another: <i>P</i><sub>avg</sub> = Δ<i>E</i>/Δ<i>t</i> and <i>P</i> = d<i>E</i>/d<i>t</i>.",
+ F11:"Pushing force <i>F</i>",muk:"<i>μ</i><sub>k</sub>",v011:"Initial speed <i>v</i><sub>0</sub>",d11:"Distance <i>d</i>",
+ rFk:"Friction <i>f</i><sub>k</sub> = <i>μ</i><sub>k</sub><i>mg</i>",rW11:"Work from outside <i>W</i> = <i>Fd</i>",rDK11:"Δ<i>E</i><sub>mec</sub> = Δ<i>K</i>",rTh11:"Δ<i>E</i><sub>th</sub> = <i>f</i><sub>k</sub><i>d</i>",rV11:"Final speed",stall:"slows to a stop before reaching d",bW11:"<i>W</i> = <i>Fd</i>",bK11:"Δ<i>E</i><sub>mec</sub>",bT11:"Δ<i>E</i><sub>th</sub>"
+}
+};
+
+const lang="en";const L=I18N[lang];const t=k=>(L[k]??k);
+const $=s=>document.querySelector(s);const NS="http://www.w3.org/2000/svg";
+function E(tag,attrs={},parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function H(tag,attrs={},parent,html){const e=document.createElement(tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(html!=null)e.innerHTML=html;if(parent)parent.appendChild(e);return e}
+const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const MU0=4*Math.PI*1e-7,EC=1.602e-19;
+const minus=s=>String(s).replace(/-/g,"−");
+function trimP(x,sig){let s=x.toPrecision(sig);if(s.includes("e"))s=String(+s);return s}
+function si(x,unit,sig=3){if(!isFinite(x))return"∞ "+unit;if(Math.abs(x)<1e-30)return"0 "+unit;
+  const P=[[1e9,"G"],[1e6,"M"],[1e3,"k"],[1,""],[1e-3,"m"],[1e-6,"μ"],[1e-9,"n"],[1e-12,"p"],[1e-15,"f"]];const a=Math.abs(x);
+  for(const[f,p]of P){if(a>=f*0.99995)return minus(trimP(x/f,sig))+" "+p+unit}return minus(sci(x))+" "+unit}
+const SUPS={"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+function sci(x,sig=3){if(!isFinite(x))return"∞";if(x===0)return"0";const a=Math.abs(x);if(a>=1e-2&&a<1e4)return minus(trimP(x,sig));
+  let e=Math.floor(Math.log10(a));let m=+(x/10**e).toPrecision(sig);if(Math.abs(m)>=10){m=+(m/10).toPrecision(sig);e++}
+  return minus(String(m))+"×10"+String(e).split("").map(c=>SUPS[c]).join("")}
+const fx=(x,d=2)=>minus((Math.abs(x)<0.5*10**-d?0:x).toFixed(d));
+const S={};
+function slider(box,{id,key,min,max,step,value,fmt,on}){const d=H("div",{class:"ctl"},box);const l=H("label",{for:id},d);H("span",{"data-i18n":key},l);const o=H("output",{},l);
+  const inp=H("input",{type:"range",id,min,max,step,value},d);const upd=()=>{S[id]=+inp.value;o.textContent=fmt(S[id])};inp.addEventListener("input",()=>{upd();on()});upd();return inp}
+function seg(box,{id,key,options,value,on}){const d=H("div",{class:"ctl"},box);H("span",{class:"lbl","data-i18n":key},d);const g=H("div",{class:"seg",role:"group"},d);S[id]=value;
+  options.forEach(([v,k])=>{const b=H("button",{type:"button","data-i18n":k,"aria-pressed":String(v===value)},g);b.addEventListener("click",()=>{S[id]=v;g.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));on()})})}
+function check(box,{id,key,value,on}){const lab=H("label",{class:"check"},box);const cb=H("input",{type:"checkbox",id},lab);cb.checked=value;S[id]=value;H("span",{"data-i18n":key},lab);cb.addEventListener("change",()=>{S[id]=cb.checked;on()})}
+function button(box,key,fn){const b=H("button",{type:"button",class:"btn","data-i18n":key},box);b.addEventListener("click",fn);return b}
+function readout(box,rows){const dl=H("dl",{class:"read"},box);const out={};rows.forEach(([id,key])=>{H("dt",{"data-i18n":key},dl);out[id]=H("dd",{},dl)});return out}
+function txt(g,x,y,s,a={}){const e=E("text",Object.assign({x,y,"font-size":14},a),g);s=String(s);
+  if(!s.includes("_")){e.textContent=s;return e}const parts=s.split(/_([A-Za-z0-9]+)/);let shifted=false;
+  parts.forEach((p,k)=>{if(!p)return;const sub=k%2===1;const ts=E("tspan",{},e);if(sub){ts.setAttribute("dy","4");ts.setAttribute("font-size","0.72em");shifted=true}else if(shifted){ts.setAttribute("dy","-4");shifted=false}ts.textContent=p});return e}
+function arrow(g,x1,y1,x2,y2,col,w=2.5,hd=9){const dx=x2-x1,dy=y2-y1,Ln=Math.hypot(dx,dy);if(Ln<2)return;const ux=dx/Ln,uy=dy/Ln;const h=Math.min(hd,Ln*0.6);const bx=x2-ux*h,by=y2-uy*h;
+  E("line",{x1,y1,x2:bx,y2:by,stroke:col,"stroke-width":w,"stroke-linecap":"round"},g);E("polygon",{points:`${x2},${y2} ${bx-uy*h*.55},${by+ux*h*.55} ${bx+uy*h*.55},${by-ux*h*.55}`,fill:col},g)}
+function dotOut(g,x,y,r,col){E("circle",{cx:x,cy:y,r,fill:"var(--panel)",stroke:col,"stroke-width":2},g);E("circle",{cx:x,cy:y,r:Math.max(1.6,r*.28),fill:col},g)}
+function crossIn(g,x,y,r,col){E("circle",{cx:x,cy:y,r,fill:"var(--panel)",stroke:col,"stroke-width":2},g);const s=r*.6;E("path",{d:`M${x-s},${y-s}L${x+s},${y+s}M${x-s},${y+s}L${x+s},${y-s}`,stroke:col,"stroke-width":2},g)}
+function xMark(g,x,y,s,col,op=1){E("path",{d:`M${x-s},${y-s}L${x+s},${y+s}M${x-s},${y+s}L${x+s},${y-s}`,stroke:col,"stroke-width":1.8,opacity:op},g)}
+function dMark(g,x,y,r,col,op=1){E("circle",{cx:x,cy:y,r,fill:col,opacity:op},g)}
+function graph(g,{l=60,r=420,t0=24,b=130,xmin,xmax,ymin,ymax,xt,yt,xl,yl}){const X=v=>l+(v-xmin)/(xmax-xmin)*(r-l),Y=v=>b-(v-ymin)/(ymax-ymin)*(b-t0);
+  xt.forEach(([v,s])=>{E("line",{x1:X(v),x2:X(v),y1:t0,y2:b,class:"gridl"},g);txt(g,X(v),b+15,s,{"text-anchor":"middle","font-size":11,fill:"var(--muted)"})});
+  yt.forEach(([v,s])=>{E("line",{x1:l,x2:r,y1:Y(v),y2:Y(v),class:"gridl"},g);txt(g,l-6,Y(v)+4,s,{"text-anchor":"end","font-size":11,fill:"var(--muted)"})});
+  E("line",{x1:l,x2:r,y1:Y(Math.max(ymin,Math.min(ymax,0))),y2:Y(Math.max(ymin,Math.min(ymax,0))),class:"axis"},g);E("line",{x1:l,x2:l,y1:t0,y2:b,class:"axis"},g);
+  if(xl)txt(g,(l+r)/2,b+30,xl,{"text-anchor":"middle","font-size":12,fill:"var(--muted)"});if(yl)txt(g,l,t0-9,yl,{"font-size":12,fill:"var(--muted)"});return{X,Y}}
+const deg=x=>x*Math.PI/180;
+const anims=[];
+let NOW=0;const G0=9.8;
+function setSlider(el,v){el.value=v;el.dispatchEvent(new Event("input"))}
+function bars(el,rows,max){el.innerHTML=rows.map(([k,v,cl,unit])=>`<div class="bar-row"><span class="bar-cap">${t(k)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(0,Math.min(100,Math.abs(v)/(max||1)*100))}%;background:${cl}"></div></div><span class="v">${unit(v)}</span></div>`).join("")}
+function block(g,x,y,w,h,col,label){E("rect",{x,y,width:w,height:h,rx:4,fill:col,opacity:.85,stroke:"var(--ink)","stroke-width":1.2},g);if(label)txt(g,x+w/2,y+h/2+5,label,{"text-anchor":"middle","font-weight":700,fill:"#fff"})}
+function farrow(g,x,y,dx,dy,col,label,lx=6,ly=-6){if(Math.hypot(dx,dy)<2)return;arrow(g,x,y,x+dx,y+dy,col,3,10);if(label)txt(g,x+dx+lx,y+dy+ly,label,{"font-size":13,"font-weight":700,fill:col,stroke:"var(--panel)","stroke-width":4,"stroke-linejoin":"round","paint-order":"stroke"})}
+function playBtn(c,obj,key="playing"){const b=H("button",{type:"button",class:"btn"},c);const upd=()=>b.innerHTML=t(obj[key]?"pause":"play");b.addEventListener("click",()=>{obj[key]=!obj[key];upd()});obj._btn=upd;return b}
+const N=x=>fx(x,2)+" N";
+
+(function(){const toc=$("#toc");L.nav.forEach((n,k)=>{const a=H("a",{href:"#s"+(k+1)},toc);a.innerHTML=`<span>${k+1}</span>${n}`})})();
+const J=x=>fx(x,2)+" J";
+function makeDrag(svg,W,Hh,pick,move){let cur=null;const pt=e=>{const r=svg.getBoundingClientRect();return[(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*Hh]};
+  svg.addEventListener("pointerdown",e=>{const p=pt(e);cur=pick(p);if(cur!==null){svg.setPointerCapture(e.pointerId);move(cur,p)}});svg.addEventListener("pointermove",e=>{if(cur!==null)move(cur,pt(e))});const end=()=>{cur=null};svg.addEventListener("pointerup",end);svg.addEventListener("pointercancel",end)}
+function coil(g,x0,x1,y,col="var(--magenta)",n=10,R=11){const lead=8,a=x0+lead,b=x1-lead,L=Math.max(4,b-a);const N=n*24,tilt=Math.min(0.42*R,0.45*L/n);
+  const pt=k=>{const t=2*Math.PI*n*k/N;return[a+L*k/N+tilt*Math.sin(t),y-R*Math.cos(t),Math.sin(t)]};
+  const segs=[[],[]];let prev=pt(0);for(let k=1;k<=N;k++){const p=pt(k);segs[(prev[2]+p[2])/2>=0?1:0].push(`M${prev[0].toFixed(1)},${prev[1].toFixed(1)}L${p[0].toFixed(1)},${p[1].toFixed(1)}`);prev=p}
+  const s=pt(0),e=pt(N);E("path",{d:`M${x0},${y}L${s[0].toFixed(1)},${s[1].toFixed(1)}M${e[0].toFixed(1)},${e[1].toFixed(1)}L${x1},${y}`,fill:"none",stroke:col,"stroke-width":2.2,"stroke-linecap":"round"},g);
+  E("path",{d:segs[0].join(""),fill:"none",stroke:col,"stroke-width":1.6,opacity:.45,"stroke-linecap":"round"},g);
+  E("path",{d:segs[1].join(""),fill:"none",stroke:col,"stroke-width":2.6,"stroke-linecap":"round"},g)}
+function spring(g,x0,x1,y,col,n,amp){coil(g,x0,x1,y,col||"var(--magenta)",10,13)}
+function ebars(el,rows,max){bars(el,rows.map(([k,v,c])=>[k,v,c,J]),max)}
+
+/* hero: pendulum with K and U bars */
+(function(){const g=$("#hero");const L0=150,th0=deg(50);let tt=0;const w=Math.sqrt(G0/1.2);
+  anims.push(dt=>{if(reduceMotion&&tt)return;tt+=dt;const th=th0*Math.cos(w*tt*1.0);g.innerHTML="";const px=500+L0*Math.sin(th),py=20+L0*Math.cos(th);E("line",{x1:430,x2:570,y1:20,y2:20,stroke:"var(--ink)","stroke-width":3},g);
+    E("line",{x1:500,y1:20,x2:px,y2:py,stroke:"var(--ink)","stroke-width":2},g);E("circle",{cx:px,cy:py,r:14,fill:"var(--magenta)"},g);
+    const U=(1-Math.cos(th))/(1-Math.cos(th0)),K=1-U;const bx=720;[["K",K,"var(--blue)"],["U",U,"var(--red)"],["K+U",1,"var(--magenta)"]].forEach(([n,v,c],i)=>{E("rect",{x:bx+i*60,y:200-v*150,width:36,height:v*150,fill:c,opacity:.8},g);txt(g,bx+i*60+18,216,n,{"text-anchor":"middle","font-weight":700,fill:c})});
+    E("path",{d:`M${500-L0*Math.sin(th0)},${20+L0*Math.cos(th0)} A${L0},${L0} 0 0,0 ${500+L0*Math.sin(th0)},${20+L0*Math.cos(th0)}`,fill:"none",stroke:"var(--line)","stroke-dasharray":"4 4"},g)})})();
+
+/* 1. work by a constant force */
+const S1={t:0};
+(function(){const c=$("#c1");slider(c,{id:"F1",key:"FF",min:0,max:50,step:1,value:30,fmt:v=>v+" N",on:u1});slider(c,{id:"th1",key:"ang",min:0,max:180,step:1,value:35,fmt:v=>v+"°",on:u1});
+  slider(c,{id:"d1",key:"dd",min:0.5,max:5,step:0.1,value:3,fmt:v=>v.toFixed(1)+" m",on:u1});S.ro1=readout(c,[["w","rW1"],["p","rPar"],["q","rPerp"],["s","rSign"]]);})();
+function u1(){const th=deg(S.th1),F=S.F1,d=S.d1;const W=F*d*Math.cos(th);const g=$("#v1");g.innerHTML="";E("line",{x1:10,x2:430,y1:170,y2:170,stroke:"var(--ink)","stroke-width":2},g);
+  const x0=60,x1=60+d*60;E("rect",{x:x0,y:120,width:60,height:50,rx:4,fill:"none",stroke:"var(--muted)","stroke-dasharray":"4 3"},g);block(g,x1,120,60,50,"var(--blue)","m");
+  farrow(g,x0+30,195,x1-x0,0,"var(--green)","Δr",4,4);const cx=x1+30,cy=145,k=2.4;farrow(g,cx,cy,F*k*Math.cos(th),-F*k*Math.sin(th),"var(--red)","F",6,-4);
+  E("line",{x1:cx,y1:cy,x2:cx+F*k*Math.cos(th),y2:cy,stroke:"var(--red)","stroke-dasharray":"3 3",opacity:.7},g);txt(g,cx+F*k*Math.cos(th)/2,cy+16,"F cos θ",{"text-anchor":"middle","font-size":11,fill:"var(--red)"});
+  if(S.th1>2)E("path",{d:`M${cx+24},${cy} A24,24 0 0,0 ${cx+24*Math.cos(th)},${cy-24*Math.sin(th)}`,fill:"none",stroke:"var(--muted)"},g);
+  const ro=S.ro1;ro.w.textContent=J(W);ro.p.textContent=fx(F*Math.cos(th),2)+" N";ro.q.textContent=fx(F*Math.sin(th),2)+" N";ro.s.textContent=t(Math.abs(W)<1e-6?"zero":W>0?"pos":"neg")}
+
+/* 2. variable force */
+const FS2={c:x=>4,l:x=>1.2*x-4,b:x=>3*Math.sin(0.9*x)+1.5};
+(function(){const c=$("#c2");seg(c,{id:"sh2",key:"shape",options:[["c","sConst"],["l","sLin"],["b","sBump"]],value:"b",on:u2});
+  slider(c,{id:"xi2",key:"xi",min:0,max:10,step:0.1,value:1,fmt:v=>v.toFixed(1)+" m",on:u2});slider(c,{id:"xf2",key:"xf",min:0,max:10,step:0.1,value:7,fmt:v=>v.toFixed(1)+" m",on:u2});S.ro2=readout(c,[["a","rArea"],["r","rRect"]]);})();
+function u2(){const F=FS2[S.sh2],a=S.xi2,b=S.xf2;const g=$("#v2");g.innerHTML="";const G=graph(g,{l:60,r:420,t0:24,b:210,xmin:0,xmax:10,ymin:-6,ymax:6,xt:[[0,"0"],[2,"2"],[4,"4"],[6,"6"],[8,"8"],[10,"10 m"]],yt:[[-6,"−6"],[0,"0"],[6,"6 N"]],yl:"F(x)"});
+  const N=200;let W=0;const lo=Math.min(a,b),hi=Math.max(a,b);for(let k=0;k<N;k++){const x0=lo+(hi-lo)*k/N,x1=lo+(hi-lo)*(k+1)/N,fm=F((x0+x1)/2);W+=fm*(x1-x0);E("rect",{x:G.X(x0),y:Math.min(G.Y(fm),G.Y(0)),width:Math.max(0,G.X(x1)-G.X(x0)+0.4),height:Math.abs(G.Y(fm)-G.Y(0)),fill:fm>=0?"var(--green)":"var(--red)",opacity:.3},g)}
+  if(b<a)W=-W;let d="";for(let k=0;k<=300;k++){const x=10*k/300;d+=(k?"L":"M")+G.X(x).toFixed(1)+","+G.Y(F(x)).toFixed(1)}E("path",{d,fill:"none",stroke:"var(--blue)","stroke-width":2.5},g);
+  [a,b].forEach((x,i)=>{E("line",{x1:G.X(x),x2:G.X(x),y1:24,y2:210,stroke:"var(--magenta)","stroke-dasharray":"4 3"},g);txt(g,G.X(x),232,i?"x_f":"x_i",{"text-anchor":"middle","font-size":12,fill:"var(--magenta)"})});
+  S.ro2.a.textContent=J(W);S.ro2.r.textContent=S.sh2==="c"?J(4*(b-a)):"—"}
+
+/* 3. work-kinetic energy */
+const S3={t:0};
+(function(){const c=$("#c3");slider(c,{id:"m3",key:"mass",min:0.5,max:10,step:0.5,value:2,fmt:v=>v.toFixed(1)+" kg",on:()=>{S3.t=0;u3()}});slider(c,{id:"vi3",key:"vi",min:0,max:10,step:0.5,value:2,fmt:v=>v.toFixed(1)+" m/s",on:()=>{S3.t=0;u3()}});
+  slider(c,{id:"F3",key:"Fs",min:-20,max:20,step:1,value:8,fmt:v=>minus(v)+" N",on:()=>{S3.t=0;u3()}});slider(c,{id:"d3",key:"dd",min:0.5,max:5,step:0.1,value:3,fmt:v=>v.toFixed(1)+" m",on:()=>{S3.t=0;u3()}});
+  button(c,"reset",()=>{S3.t=0});S.ro3=readout(c,[["w","rW3"],["ki","rKi"],["kf","rKf"],["vf","rVf"]]);})();
+function info3(){const m=S.m3,vi=S.vi3,F=S.F3,d=S.d3,a=F/m;const Ki=0.5*m*vi*vi;let dist=d;if(Ki+F*d<0)dist=Ki/(-F);const W=F*dist,Kf=Ki+W;return{m,vi,F,d,a,Ki,W,Kf,dist,vf:Math.sqrt(Math.max(0,2*Kf/m))}}
+function u3(){const I=info3();const ro=S.ro3;ro.w.textContent=J(I.F*I.d);ro.ki.textContent=J(I.Ki);ro.kf.textContent=J(Math.max(0,I.Ki+I.F*I.d));ro.vf.textContent=I.dist<I.d?t("stopsAt")+fx(I.dist,2)+" m":fx(I.vf,2)+" m/s"}
+function draw3(dt){const I=info3();S3.t+=dt;// position along d
+  let s,v;{const a=I.a,vi=I.vi;const T=a===0?(vi>0?I.d/vi:1e9):null;let tt=S3.t*0.6;let x=vi*tt+0.5*a*tt*tt,vv=vi+a*tt;if(vv<0&&a<0){x=I.dist;vv=0}if(x>=I.d){x=I.d;vv=I.vf}s=x;v=vv;if(S3.t>((I.vi+I.vf)>0?2*I.d/(I.vi+I.vf+1e-9)/0.6:2)+1.5)S3.t=0}
+  const g=$("#v3");g.innerHTML="";E("line",{x1:10,x2:430,y1:110,y2:110,stroke:"var(--ink)","stroke-width":2},g);const X=xx=>50+xx*64;E("line",{x1:X(0),x2:X(0),y1:105,y2:125,stroke:"var(--muted)"},g);E("line",{x1:X(I.d),x2:X(I.d),y1:105,y2:125,stroke:"var(--muted)"},g);txt(g,(X(0)+X(I.d))/2,136,"d",{"text-anchor":"middle","font-style":"italic",fill:"var(--muted)"});
+  block(g,X(s)-24,70,48,40,"var(--blue)","m");farrow(g,X(s)+(I.F>=0?24:-24),90,I.F*3,0,"var(--red)","F",4,-8);if(v>0.02)farrow(g,X(s),60,v*8,0,"var(--green)","v",4,-4);
+  const Kn=0.5*I.m*v*v;const mx=Math.max(I.Ki,I.Ki+Math.abs(I.W),1e-6);ebars($("#bars3"),[["bKi",I.Ki,"var(--blue)"],["bW",I.W*(s/Math.max(I.d,1e-9))*(I.dist<I.d?I.d/I.dist:1),I.W>=0?"var(--green)":"var(--red)"],["bKf",Kn,"var(--magenta)"]],mx)}
+
+/* 4. work by gravity */
+const S4={t:0};
+(function(){const c=$("#c4");seg(c,{id:"md4",key:"mode4",options:[["up","up"],["down","down"],["lift","lift"],["lower","lower"]],value:"up",on:()=>{S4.t=0;u4()}});
+  slider(c,{id:"m4",key:"mass",min:0.5,max:10,step:0.5,value:1,fmt:v=>v.toFixed(1)+" kg",on:u4});slider(c,{id:"d4",key:"d4",min:0.5,max:5,step:0.1,value:2,fmt:v=>v.toFixed(1)+" m",on:()=>{S4.t=0;u4()}});
+  slider(c,{id:"vi4",key:"vi",min:0,max:12,step:0.5,value:8,fmt:v=>v.toFixed(1)+" m/s",on:()=>{S4.t=0;u4()}});S.ro4=readout(c,[["wg","rWg"],["wa","rWa"],["dk","rDK"],["vf","rVf4"]]);})();
+function u4(){const m=S.m4,d=S.d4,vi=S.vi4,md=S.md4;const ro=S.ro4;$("#v4").closest&&0;const vctl=$("#c4").querySelectorAll(".ctl")[3];vctl&&vctl.classList.toggle("off",md==="lift"||md==="lower");
+  if(md==="up"){const hmax=vi*vi/(2*G0);ro.wg.textContent=J(-m*G0*Math.min(d,hmax));ro.wa.textContent="0";ro.dk.textContent=J(-m*G0*Math.min(d,hmax));ro.vf.textContent=vi*vi-2*G0*d<0?t("noReach")+fx(hmax,2)+" m":fx(Math.sqrt(vi*vi-2*G0*d),2)+" m/s"}
+  else if(md==="down"){ro.wg.textContent=J(m*G0*d);ro.wa.textContent="0";ro.dk.textContent=J(m*G0*d);ro.vf.textContent=fx(Math.sqrt(vi*vi+2*G0*d),2)+" m/s"}
+  else{const s=md==="lift"?1:-1;ro.wg.textContent=J(-s*m*G0*d);ro.wa.textContent=J(s*m*G0*d);ro.dk.textContent="0";ro.vf.textContent="≈ 0"}}
+function draw4(dt){S4.t+=dt;const m=S.m4,d=S.d4,vi=S.vi4,md=S.md4;const g=$("#v4");g.innerHTML="";const sc=40,y0=240;E("line",{x1:60,x2:380,y1:y0+14,y2:y0+14,stroke:"var(--ink)","stroke-width":2},g);
+  E("line",{x1:120,x2:120,y1:y0,y2:y0-d*sc,stroke:"var(--muted)"},g);txt(g,112,y0-d*sc/2,"d",{"text-anchor":"end","font-style":"italic",fill:"var(--muted)"});E("line",{x1:110,x2:130,y1:y0-d*sc,y2:y0-d*sc,stroke:"var(--muted)"},g);
+  let y,v;if(md==="up"){let tt=S4.t*0.8;const tm=vi/G0;y=vi*tt-0.5*G0*tt*tt;v=vi-G0*tt;if(y<0){S4.t=0;y=0;v=vi}}else if(md==="down"){let tt=S4.t*0.8;y=d-(vi*tt+0.5*G0*tt*tt);v=-(vi+G0*tt);if(y<0){y=0;if(S4.t>3)S4.t=0}}
+  else{const u=((S4.t*0.25)%1.3);const f=Math.min(1,u);y=md==="lift"?d*f:d*(1-f);v=0}
+  const by=y0-y*sc;E("circle",{cx:220,cy:by-12,r:12,fill:"var(--blue)"},g);farrow(g,250,by-12,0,m*G0*2,"var(--red)","mg",6,8);if(Math.abs(v)>0.1)farrow(g,190,by-12,0,-v*5,"var(--green)","v",-14,0);
+  if(md==="lift"||md==="lower"){E("path",{d:`M200,${by+2} q20,14 40,0`,stroke:"var(--copper)","stroke-width":8,fill:"none","stroke-linecap":"round"},g);farrow(g,186,by-12,0,-m*G0*2-10,"var(--copper)","F = mg",-62,0)}
+  txt(g,300,30,"y = "+fx(y,2)+" m",{"font-size":13,"font-weight":700})}
+
+/* 5. spring work */
+(function(){const c=$("#c5");slider(c,{id:"k5",key:"kk",min:10,max:200,step:5,value:100,fmt:v=>v+" N/m",on:u5});slider(c,{id:"xi5",key:"xi5",min:-0.5,max:0.5,step:0.01,value:0.1,fmt:v=>minus(v.toFixed(2))+" m",on:u5});
+  slider(c,{id:"xf5",key:"xf5",min:-0.5,max:0.5,step:0.01,value:0.4,fmt:v=>minus(v.toFixed(2))+" m",on:u5});S.ro5=readout(c,[["fi","rFi"],["ff","rFf"],["w","rWs"],["m","rMean"]]);})();
+function u5(){const k=S.k5,xi=S.xi5,xf=S.xf5;const W=0.5*k*(xi*xi-xf*xf);const g=$("#v5");g.innerHTML="";const X=x=>220+x*300;
+  E("line",{x1:20,x2:20,y1:20,y2:80,stroke:"var(--ink)","stroke-width":4},g);E("line",{x1:20,x2:430,y1:80,y2:80,stroke:"var(--ink)","stroke-width":2},g);E("line",{x1:X(0),x2:X(0),y1:80,y2:92,stroke:"var(--muted)"},g);txt(g,X(0),104,"x = 0",{"text-anchor":"middle","font-size":11,fill:"var(--muted)"});
+  E("rect",{x:X(xi)-20,y:42,width:40,height:38,rx:4,fill:"none",stroke:"var(--muted)","stroke-dasharray":"4 3"},g);spring(g,20,X(xf)-20,61);block(g,X(xf)-20,42,40,38,"var(--blue)","m");farrow(g,X(xf),30,-k*xf*0.8,0,"var(--red)","F_s",4,-4);
+  const Fm=0.5*200;const G=graph(g,{l:60,r:420,t0:130,b:280,xmin:-0.5,xmax:0.5,ymin:-Fm,ymax:Fm,xt:[[-0.5,"−0.5"],[0,"0"],[0.5,"0.5 m"]],yt:[[-Fm,"−100"],[0,"0"],[Fm,"100 N"]],yl:t("gF5")});
+  E("polygon",{points:`${G.X(xi)},${G.Y(0)} ${G.X(xi)},${G.Y(-k*xi)} ${G.X(xf)},${G.Y(-k*xf)} ${G.X(xf)},${G.Y(0)}`,fill:W>=0?"var(--green)":"var(--red)",opacity:.3},g);
+  E("line",{x1:G.X(-0.5),y1:G.Y(k*0.5),x2:G.X(0.5),y2:G.Y(-k*0.5),stroke:"var(--blue)","stroke-width":2.5},g);arrow(g,G.X(xi),G.Y(0)+12,G.X(xf),G.Y(0)+12,"var(--magenta)",2,7);
+  const ro=S.ro5;ro.fi.textContent=fx(-k*xi,1)+" N";ro.ff.textContent=fx(-k*xf,1)+" N";ro.w.textContent=J(W);ro.m.textContent=t(Math.abs(W)<1e-9?"same":W<0?"slower":"faster")}
+
+/* 6. power */
+const S6={t:0};
+(function(){const c=$("#c6");slider(c,{id:"m6",key:"mC",min:10,max:500,step:10,value:100,fmt:v=>v+" kg",on:u6});slider(c,{id:"vs6",key:"vC",min:0.1,max:3,step:0.1,value:1,fmt:v=>v.toFixed(1)+" m/s",on:u6});
+  slider(c,{id:"h6",key:"hC",min:1,max:20,step:1,value:10,fmt:v=>v+" m",on:u6});S.ro6=readout(c,[["p","rP6"],["t","rT6"],["w","rW6"],["k","rKwh"]]);})();
+function u6(){const m=S.m6,v=S.vs6,h=S.h6;const P=m*G0*v;const ro=S.ro6;ro.p.textContent=si(P,"W");ro.t.textContent=fx(h/v,1)+" s";ro.w.textContent=si(m*G0*h,"J");ro.k.textContent=sci(m*G0*h/3.6e6)+" kWh"}
+function draw6(dt){const v=S.vs6,h=S.h6;S6.t+=dt;const T=h/v;if(S6.t>T+1.5)S6.t=0;const y=Math.min(h,v*S6.t);const g=$("#v6");g.innerHTML="";
+  E("rect",{x:200,y:10,width:60,height:30,rx:4,fill:"var(--muted)"},g);txt(g,230,30,"M",{"text-anchor":"middle",fill:"var(--panel)","font-weight":700});const by=230-y/h*170;E("line",{x1:230,x2:230,y1:40,y2:by-30,stroke:"var(--ink)","stroke-width":2},g);
+  E("rect",{x:205,y:by-30,width:50,height:30,rx:3,fill:"var(--copper)"},g);E("line",{x1:100,x2:360,y1:230,y2:230,stroke:"var(--ink)","stroke-width":2},g);
+  if(y<h)farrow(g,270,by-15,0,-30,"var(--green)","v",6,0);txt(g,300,120,"P = "+si(S.m6*G0*v,"W"),{"font-size":14,"font-weight":700,fill:"var(--magenta)"});txt(g,300,142,t("wSoFar")+" = "+si(S.m6*G0*y,"J"),{"font-size":12,fill:"var(--muted)"})}
+
+/* 7. path independence */
+(function(){const c=$("#c7");seg(c,{id:"f7",key:"force7",options:[["g","grav"],["f","fric"]],value:"g",on:u7});slider(c,{id:"dt7",key:"det",min:0,max:1,step:0.02,value:0.6,fmt:v=>v.toFixed(2),on:u7});
+  S.ro7=readout(c,[["a","rW71"],["b","rW72"],["l","rLoop"],["len","rL7"]]);})();
+function u7(){const g=$("#v7");g.innerHTML="";const a=[70,220],b=[370,80];const m=1,mu=0.5;const sc=50;// px per m
+  const p1=[];for(let k=0;k<=100;k++){const u=k/100;p1.push([a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u])}
+  const D=S.dt7;const p2=[];for(let k=0;k<=200;k++){const u=k/200;const bx=a[0]+(b[0]-a[0])*u,by=a[1]+(b[1]-a[1])*u;const off=D*130*Math.sin(Math.PI*u)+D*30*Math.sin(3*Math.PI*u);p2.push([bx+off*0.5,by+off])}
+  const work=(pts)=>{let W=0,Lg=0;for(let k=1;k<pts.length;k++){const dx=(pts[k][0]-pts[k-1][0])/sc,dy=-(pts[k][1]-pts[k-1][1])/sc;const ds=Math.hypot(dx,dy);Lg+=ds;W+=S.f7==="g"?-m*G0*dy:-mu*m*G0*ds}return[W,Lg]};
+  const[W1,L1]=work(p1),[W2,L2]=work(p2);const rev=p2.slice().reverse();const[W2b]=work(rev);
+  if(S.f7==="g")for(let x=40;x<440;x+=60)farrow(g,x,20,0,24,"var(--muted)","",0,0);
+  E("path",{d:"M"+p1.map(p=>p.map(v=>v.toFixed(1)).join(",")).join("L"),fill:"none",stroke:"var(--blue)","stroke-width":3},g);E("path",{d:"M"+p2.map(p=>p.map(v=>v.toFixed(1)).join(",")).join("L"),fill:"none",stroke:"var(--red)","stroke-width":3},g);
+  const m1=p1[50],m2=p2[100];txt(g,m1[0]-14,m1[1]-8,"1",{"font-weight":700,fill:"var(--blue)"});txt(g,m2[0]+8,m2[1]+4,"2",{"font-weight":700,fill:"var(--red)"});
+  E("circle",{cx:a[0],cy:a[1],r:7,fill:"var(--ink)"},g);E("circle",{cx:b[0],cy:b[1],r:7,fill:"var(--ink)"},g);txt(g,a[0]-16,a[1]+4,"a",{"font-weight":700});txt(g,b[0]+10,b[1]+4,"b",{"font-weight":700});
+  txt(g,430,268,S.f7==="g"?"m = 1 kg, g ↓":"m = 1 kg, μk = 0.5",{"text-anchor":"end","font-size":12,fill:"var(--muted)"});
+  const ro=S.ro7;ro.a.textContent=J(W1);ro.b.textContent=J(W2);ro.l.textContent=J(W1+W2b);ro.len.textContent=fx(L1,2)+" m, "+fx(L2,2)+" m"}
+
+/* 8. pendulum */
+const S8={th:0,w:0,hist:[],t:0};
+(function(){const c=$("#c8");slider(c,{id:"L8",key:"len",min:0.5,max:3,step:0.1,value:1.5,fmt:v=>v.toFixed(1)+" m",on:r8});slider(c,{id:"t8",key:"th0",min:5,max:80,step:1,value:45,fmt:v=>v+"°",on:r8});
+  slider(c,{id:"m8",key:"mass",min:0.1,max:5,step:0.1,value:1,fmt:v=>v.toFixed(1)+" kg",on:r8});S.ro8=readout(c,[["k","rK8"],["u","rU8"],["e","rE8"],["v","rVb"]]);r8()})();
+function r8(){S8.th=deg(S.t8);S8.w=0;S8.hist=[];S8.t=0}
+function draw8(dt){const L0=S.L8,m=S.m8;const f=(th)=>-G0/L0*Math.sin(th);const h=dt/4;for(let i=0;i<4;i++){const k1=S8.w,l1=f(S8.th),k2=S8.w+h/2*l1,l2=f(S8.th+h/2*k1),k3=S8.w+h/2*l2,l3=f(S8.th+h/2*k2),k4=S8.w+h*l3,l4=f(S8.th+h*k3);S8.th+=h/6*(k1+2*k2+2*k3+k4);S8.w+=h/6*(l1+2*l2+2*l3+l4)}S8.t+=dt;
+  const K=0.5*m*(L0*S8.w)**2,U=m*G0*L0*(1-Math.cos(S8.th)),E0=m*G0*L0*(1-Math.cos(deg(S.t8)));S8.hist.push([S8.t,K,U]);while(S8.hist.length&&S8.hist[0][0]<S8.t-6)S8.hist.shift();
+  const g=$("#v8");g.innerHTML="";const sc=150/3,px0=220,py0=20,Lp=L0*sc*1.5;const px=px0+Lp*Math.sin(S8.th),py=py0+Lp*Math.cos(S8.th);E("line",{x1:150,x2:290,y1:py0,y2:py0,stroke:"var(--ink)","stroke-width":3},g);
+  E("line",{x1:px0,y1:py0,x2:px0,y2:py0+Lp+20,stroke:"var(--line)","stroke-dasharray":"4 4"},g);E("line",{x1:px0,y1:py0,x2:px,y2:py,stroke:"var(--ink)","stroke-width":2},g);E("circle",{cx:px,cy:py,r:12,fill:"var(--magenta)"},g);
+  E("line",{x1:px,x2:px0+30,y1:py,y2:py,stroke:"var(--red)","stroke-dasharray":"2 3"},g);E("line",{x1:px0+30,x2:px0+30,y1:py,y2:py0+Lp,stroke:"var(--red)"},g);txt(g,px0+36,(py+py0+Lp)/2+4,"h",{"font-style":"italic",fill:"var(--red)"});
+  [[K,"var(--blue)","K"],[U,"var(--red)","U"],[K+U,"var(--magenta)","E"]].forEach(([v,c,n],i)=>{const hgt=E0>0?v/E0*170:0;E("rect",{x:350+i*28,y:220-hgt,width:20,height:hgt,fill:c,opacity:.8},g);txt(g,360+i*28,238,n,{"text-anchor":"middle","font-weight":700,fill:c,"font-size":12})});
+  const p=$("#v8p");p.innerHTML="";const Gp=graph(p,{l:60,r:420,t0:24,b:140,xmin:Math.max(0,S8.t-6),xmax:Math.max(6,S8.t),ymin:0,ymax:E0*1.1||1,xt:[],yt:[[0,"0"],[E0,fx(E0,2)+" J"]],yl:t("gE8")});
+  [[1,"var(--blue)"],[2,"var(--red)"]].forEach(([i,c])=>{E("path",{d:S8.hist.map((h,k)=>(k?"L":"M")+Gp.X(h[0]).toFixed(1)+","+Gp.Y(h[i]).toFixed(1)).join(""),fill:"none",stroke:c,"stroke-width":2.2},p)});E("path",{d:S8.hist.map((h,k)=>(k?"L":"M")+Gp.X(h[0]).toFixed(1)+","+Gp.Y(h[1]+h[2]).toFixed(1)).join(""),fill:"none",stroke:"var(--magenta)","stroke-width":2.2},p);
+  const ro=S.ro8;ro.k.textContent=J(K);ro.u.textContent=J(U);ro.e.textContent=J(K+U);ro.v.textContent=fx(Math.sqrt(2*G0*L0*(1-Math.cos(deg(S.t8)))),2)+" m/s"}
+
+/* 9. frictionless track */
+const S9={x:0.15,dir:1};
+(function(){const c=$("#c9");slider(c,{id:"h09",key:"h0",min:1,max:5,step:0.1,value:3.5,fmt:v=>v.toFixed(1)+" m",on:()=>{S9.x=0.15;S9.dir=1}});slider(c,{id:"hl9",key:"hill",min:0.5,max:5,step:0.1,value:2.5,fmt:v=>v.toFixed(1)+" m",on:()=>{S9.x=0.15;S9.dir=1}});
+  slider(c,{id:"m9",key:"mass",min:0.5,max:10,step:0.5,value:1,fmt:v=>v.toFixed(1)+" kg",on:()=>{}});button(c,"reset",()=>{S9.x=0.15;S9.dir=1});S.ro9=readout(c,[["y","rY9"],["v","rV9"],["lo","rVlow"]]);})();
+const sq=v=>v*v;function yT9(x){const h0=S.h09,hl=S.hl9;return 0.3+(h0-0.3)*Math.exp(-sq(x/1.4))+hl*Math.exp(-sq((x-6.2)/1.0))+3*Math.exp(-sq((x-10.5)/1.1))}
+function draw9(dt){const h0=yT9(0.15);const m=S.m9;let x=S9.x;const step=dt*0.9;for(let i=0;i<20;i++){const y=yT9(x),v=Math.sqrt(Math.max(0,2*G0*(h0-y)));const dy=(yT9(x+1e-3)-yT9(x-1e-3))/2e-3;let dx=S9.dir*Math.max(v,0.25)*step/20/Math.sqrt(1+dy*dy);
+    const xn=x+dx;if(yT9(xn)>=h0){S9.dir*=-1}else x=xn;if(x<0.15){x=0.15;S9.dir=1}if(x>10.4)S9.dir=-1}S9.x=x;
+  const g=$("#v9");g.innerHTML="";const X=xx=>20+xx*39,Y=yy=>230-yy*40;let d="";for(let k=0;k<=300;k++){const xx=10.6*k/300;d+=(k?"L":"M")+X(xx).toFixed(1)+","+Y(yT9(xx)).toFixed(1)}E("path",{d:d+`L${X(10.6)},250L${X(0)},250Z`,fill:"var(--grid)",stroke:"var(--ink)","stroke-width":2.5},g);
+  E("line",{x1:X(0),x2:X(10.6),y1:Y(h0),y2:Y(h0),stroke:"var(--magenta)","stroke-dasharray":"5 4"},g);txt(g,X(10.6)-4,Y(h0)-6,"h₀",{"text-anchor":"end",fill:"var(--magenta)","font-weight":700});
+  const y=yT9(x);const v=Math.sqrt(Math.max(0,2*G0*(h0-y)));const dy=(yT9(x+1e-3)-yT9(x-1e-3))/2e-3;const nx=-dy/Math.sqrt(1+dy*dy),ny=1/Math.sqrt(1+dy*dy);
+  E("circle",{cx:X(x)+nx*10*(39/40),cy:Y(y)-ny*10,r:10,fill:"var(--blue)"},g);
+  let ymin=1e9;for(let k=0;k<=300;k++){const xx=0.15+10.2*k/300;ymin=Math.min(ymin,yT9(xx))}
+  const ro=S.ro9;ro.y.textContent=fx(y,2)+" m";ro.v.textContent=fx(v,2)+" m/s";ro.lo.textContent=fx(Math.sqrt(2*G0*(h0-ymin)),2)+" m/s";const E0=m*G0*h0;ebars($("#bars9"),[["bK",0.5*m*v*v,"var(--blue)"],["bU",m*G0*y,"var(--red)"]],E0)}
+
+/* 10. U(x) curve */
+const U10=x=>1.2+0.9*Math.sin(1.4*x)+0.05*(x-5)**2+0.6*Math.exp(-(((x-6.8)/0.6)**2));const F10=x=>-(U10(x+1e-4)-U10(x-1e-4))/2e-4;const S10={x:2,v:0};
+(function(){const c=$("#c10");slider(c,{id:"x10",key:"x0",min:0.3,max:9.7,step:0.05,value:2.3,fmt:v=>v.toFixed(2)+" m",on:()=>{S10.x=S.x10;S10.v=0}});S10.x=2.3;
+  S.ro10=readout(c,[["e","rE10"],["x","rX10"],["k","rK10"],["f","rF10"]]);})();
+function draw10(dt){const E0=U10(S.x10);const h=dt/10;for(let i=0;i<10;i++){S10.v+=F10(S10.x)*h;S10.x+=S10.v*h;if(S10.x<0.05||S10.x>9.95){S10.v=-S10.v;S10.x=Math.max(0.05,Math.min(9.95,S10.x))}}
+  // keep energy exact: fix speed from E - U
+  const K=Math.max(0,E0-U10(S10.x));S10.v=Math.sign(S10.v||1)*Math.sqrt(2*K)*(Math.abs(S10.v)>0||K>0?1:0);
+  const g=$("#v10");g.innerHTML="";const Gu=graph(g,{l:50,r:420,t0:24,b:190,xmin:0,xmax:10,ymin:0,ymax:4,xt:[[0,""],[2,""],[4,""],[6,""],[8,""],[10,""]],yt:[[0,"0"],[2,"2"],[4,"4 J"]],yl:t("gU")});
+  let d="";for(let k=0;k<=400;k++){const x=10*k/400;d+=(k?"L":"M")+Gu.X(x).toFixed(1)+","+Gu.Y(U10(x)).toFixed(1)}
+  // allowed region shading
+  for(let k=0;k<200;k++){const x0=10*k/200,x1=10*(k+1)/200;if(U10((x0+x1)/2)<=E0)E("rect",{x:Gu.X(x0),y:Gu.Y(E0),width:Gu.X(x1)-Gu.X(x0)+0.3,height:Math.max(0,Gu.Y(U10((x0+x1)/2))-Gu.Y(E0)),fill:"var(--blue)",opacity:.12},g)}
+  E("path",{d,fill:"none",stroke:"var(--red)","stroke-width":2.5},g);E("line",{x1:Gu.X(0),x2:Gu.X(10),y1:Gu.Y(E0),y2:Gu.Y(E0),stroke:"var(--magenta)","stroke-width":1.8,"stroke-dasharray":"6 4"},g);txt(g,Gu.X(10)-2,Gu.Y(E0)-6,"E_mec",{"text-anchor":"end","font-size":12,fill:"var(--magenta)"});
+  const Gf=graph(g,{l:50,r:420,t0:226,b:340,xmin:0,xmax:10,ymin:-3,ymax:3,xt:[[0,"0"],[2,"2"],[4,"4"],[6,"6"],[8,"8"],[10,"10 m"]],yt:[[-3,"−3"],[0,"0"],[3,"3 N"]],yl:t("gF")});
+  let df="";for(let k=0;k<=400;k++){const x=10*k/400;df+=(k?"L":"M")+Gf.X(x).toFixed(1)+","+Gf.Y(Math.max(-3.2,Math.min(3.2,F10(x)))).toFixed(1)}E("path",{d:df,fill:"none",stroke:"var(--blue)","stroke-width":2.5},g);
+  for(let k=0;k<1000;k++){const x0=10*k/1000,x1=10*(k+1)/1000;if(F10(x0)*F10(x1)<0){const xe=(x0+x1)/2;const st=F10(x0)>0;E("line",{x1:Gu.X(xe),x2:Gf.X(xe),y1:Gu.Y(U10(xe)),y2:Gf.Y(0),stroke:"var(--muted)","stroke-dasharray":"2 3"},g);
+    E("circle",{cx:Gu.X(xe),cy:Gu.Y(U10(xe)),r:5,fill:st?"var(--green)":"var(--panel)",stroke:"var(--green)","stroke-width":2},g);E("circle",{cx:Gf.X(xe),cy:Gf.Y(0),r:4,fill:st?"var(--green)":"var(--panel)",stroke:"var(--green)","stroke-width":2},g);txt(g,Gu.X(xe),Gu.Y(U10(xe))+(st?18:-10),t(st?"stable":"unstable"),{"text-anchor":"middle","font-size":10,fill:"var(--green)"})}}
+  E("circle",{cx:Gu.X(S10.x),cy:Gu.Y(U10(S10.x))-8,r:8,fill:"var(--magenta)"},g);const Fx=F10(S10.x);farrow(g,Gu.X(S10.x),Gu.Y(U10(S10.x))-24,Fx*20,0,"var(--blue)","F",4,-4);E("circle",{cx:Gf.X(S10.x),cy:Gf.Y(Math.max(-3,Math.min(3,Fx))),r:5,fill:"var(--magenta)"},g);
+  const ro=S.ro10;ro.e.textContent=J(E0);ro.x.textContent=fx(S10.x,2)+" m";ro.k.textContent=J(K);ro.f.textContent=fx(Fx,2)+" N"}
+
+/* 11. friction and thermal energy */
+const S11={t:0};
+(function(){const c=$("#c11");slider(c,{id:"m11",key:"mass",min:1,max:10,step:0.5,value:2,fmt:v=>v.toFixed(1)+" kg",on:()=>{S11.t=0;u11()}});slider(c,{id:"F11",key:"F11",min:0,max:40,step:1,value:15,fmt:v=>v+" N",on:()=>{S11.t=0;u11()}});
+  slider(c,{id:"mu11",key:"muk",min:0,max:1,step:0.05,value:0.3,fmt:v=>v.toFixed(2),on:()=>{S11.t=0;u11()}});slider(c,{id:"v011",key:"v011",min:0,max:5,step:0.5,value:1,fmt:v=>v.toFixed(1)+" m/s",on:()=>{S11.t=0;u11()}});
+  slider(c,{id:"d11",key:"d11",min:0.5,max:5,step:0.1,value:3,fmt:v=>v.toFixed(1)+" m",on:()=>{S11.t=0;u11()}});S.ro11=readout(c,[["fk","rFk"],["w","rW11"],["dk","rDK11"],["th","rTh11"],["v","rV11"]]);})();
+function info11(){const m=S.m11,F=S.F11,fk=S.mu11*m*G0,v0=S.v011,d=S.d11;const Ki=0.5*m*v0*v0;let dist=d;if(Ki+(F-fk)*d<0)dist=Ki/(fk-F);return{m,F,fk,v0,d,Ki,dist,a:(F-fk)/m}}
+function u11(){const I=info11();const ro=S.ro11;const dK=(I.F-I.fk)*I.dist;ro.fk.textContent=fx(I.fk,2)+" N";ro.w.textContent=J(I.F*I.dist);ro.dk.textContent=J(dK);ro.th.textContent=J(I.fk*I.dist);ro.v.textContent=I.dist<I.d?t("stall")+" ("+fx(I.dist,2)+" m)":fx(Math.sqrt(2*(I.Ki+dK)/I.m),2)+" m/s"}
+function draw11(dt){const I=info11();S11.t+=dt*0.7;let tt=S11.t;let x=I.v0*tt+0.5*I.a*tt*tt,v=I.v0+I.a*tt;if(v<0){v=0;x=I.dist}if(x>=I.dist){x=I.dist;if(S11.t>8)S11.t=0;v=Math.sqrt(Math.max(0,2*(I.Ki+(I.F-I.fk)*I.dist)/I.m))*(I.dist<I.d?0:1);if(S11.t>((x)/(Math.max(0.3,(I.v0+v)/2)))/0.7+1.5)S11.t=0}
+  const g=$("#v11");g.innerHTML="";E("line",{x1:10,x2:430,y1:110,y2:110,stroke:"var(--ink)","stroke-width":2},g);for(let k=10;k<430;k+=14)E("line",{x1:k,x2:k-8,y1:110,y2:120,stroke:"var(--muted)"},g);
+  const X=xx=>50+xx*64;block(g,X(x)-24,70,48,40,"var(--blue)","m");farrow(g,X(x)-24-I.F*2.4,90,I.F*2.4,0,"var(--red)","F",-I.F*2.4,-8);farrow(g,X(x)-24,106,-I.fk*2.4,0,"var(--magenta)","f_k",-I.fk*2.4-8,14);
+  const heat=Math.min(1,I.fk*x/40);E("rect",{x:X(0),y:110,width:Math.max(0,X(x)-X(0)),height:4,fill:"var(--red)",opacity:0.2+0.6*heat},g);
+  const W=I.F*x,dK=(I.F-I.fk)*x,Th=I.fk*x;const mx=Math.max(I.F*I.dist,I.fk*I.dist,Math.abs((I.F-I.fk)*I.dist),1e-6);ebars($("#bars11"),[["bW11",W,"var(--red)"],["bK11",dK,dK>=0?"var(--blue)":"var(--copper)"],["bT11",Th,"var(--magenta)"]],mx)}
+
+/* loop */
+function applyText(){document.querySelectorAll("[data-i18n]").forEach(el=>{el.innerHTML=t(el.dataset.i18n)})}
+let last=performance.now();
+function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;NOW+=dt;anims.forEach(f=>f(dt));draw3(dt);draw4(dt);draw6(dt);draw8(dt);draw9(dt);draw10(dt);draw11(dt);requestAnimationFrame(frame)}
+applyText();u1();u2();u3();u4();u5();u6();u7();u11();requestAnimationFrame(frame);
+</script>
+</body>
+</html>
