@@ -254,7 +254,7 @@ ko:{
  h5:"용수철 힘이 한 일",
  p5a:"일상의 많은 힘들이 용수철 힘과 수학적으로 동일한 형태이므로, 이 문제에서 얻은 결과를 다양하게 응용할 수 있습니다. 평형 상태(<i>x</i> = 0)에서는 용수철 힘이 작용하지 않습니다. 평형 상태에서 <b>d</b>만큼 늘어나거나 줄어들면, 용수철이 원래 길이로 돌아가려는 복원력(restoring force)이 작용합니다: <b>F</b><sub>s</sub> = −<i>k</i><b>d</b>(Hooke의 법칙), <i>k</i>는 용수철 상수(단위: N/m = kg/s<sup>2</sup>). 용수철의 위치가 <i>x</i><sub>i</sub>에서 <i>x</i><sub>f</sub>로 변할 때 힘이 변위의 함수이므로 용수철이 한 일은 <i>W</i><sub>s</sub> = ∫(−<i>kx</i>) d<i>x</i> = (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>i</sub></span> − (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>f</sub></span>입니다.",
  p5b:"용수철이 평형에서 더 많이 벗어나면(|<i>x</i><sub>i</sub>| &lt; |<i>x</i><sub>f</sub>|) <i>W</i><sub>s</sub> &lt; 0: 용수철이 물체에 음의 일을 함(= 물체가 용수철에 양의 일을 함, 작용–반작용)이므로 물체의 운동에너지(속력)가 줄어듭니다(느려진다). 평형으로 더 가까이 가면 <i>W</i><sub>s</sub> &gt; 0이고 물체가 빨라집니다. 외부 힘 <b>F</b><sub>a</sub>로 움직이기 직전과 직후에 물체가 움직이지 않으면 <i>K</i><sub>f</sub> − <i>K</i><sub>i</sub> = 0 = <i>W</i><sub>a</sub> + <i>W</i><sub>s</sub>이므로 <b>F</b><sub>a</sub> = −<b>F</b><sub>s</sub>입니다. 용수철이 물체에 해 준 일 = −(물체가 용수철에 한 일)인 것은 작용–반작용 쌍이고, <b>F</b><sub>a</sub>와 <b>F</b><sub>s</sub>는 크기는 같고 방향만 반대인 다른 힘입니다.",
- kk:"용수철 상수 <i>k</i>",xi5:"시작 <i>x</i><sub>i</sub>",xf5:"끝 <i>x</i><sub>f</sub>",
+ rX5:"위치 <i>x</i>",rV5:"속력 <i>v</i>",rK5:"운동 에너지 <i>K</i>",slow5:"슬로 모션 ×1/10",kk:"용수철 상수 <i>k</i>",xi5:"시작 <i>x</i><sub>i</sub>",xf5:"끝 <i>x</i><sub>f</sub>",
  rFi:"<i>x</i><sub>i</sub>에서의 힘 −<i>kx</i><sub>i</sub>",rFf:"<i>x</i><sub>f</sub>에서의 힘 −<i>kx</i><sub>f</sub>",rWs:"<i>W</i><sub>s</sub> = (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>i</sub></span> − (1/2)<i>kx</i><span class='ss'><sup>2</sup><sub>f</sub></span>",rMean:"물체에 미치는 효과",slower:"느려짐 (W < 0)",faster:"빨라짐 (W > 0)",same:"변화 없음 (W = 0)",gF5:"F(x) = −kx, 칠한 면적 = W",
  h6:"일률",
  p6:"일률(power)은 힘이 한 일의 시간 변화율입니다. 시간 간격 Δ<i>t</i> 동안에 힘이 <i>W</i>의 일을 한다면 평균 일률은 <i>P</i><sub>avg</sub> = <i>W</i>/Δ<i>t</i>, 극한을 취하면 순간 일률 <i>P</i> = d<i>W</i>/d<i>t</i>, 즉 <i>W</i> = ∫<i>P</i> d<i>t</i>입니다. 단위는 J/s = W(와트)이고, 일의 단위를 W · (시간) 단위로도 쓸 수 있습니다. 보통 전력량은 kWh(1시간 동안 1000 W를 쓰는 일의 양)로, 단위로는 많이 씁니다. d<i>W</i> = <b>F</b> · d<b>r</b>이고 미소량이므로 <b>F</b>는 d<i>t</i> 동안 일정하다고 보면 <i>P</i> = <b>F</b> · d<b>r</b>/d<i>t</i> = <b>F</b> · <b>v</b>: 힘을 작용하여 속도가 <b>v</b>가 되면 시간당 일이 이렇게 주어집니다.",
@@ -406,16 +406,33 @@ function draw4(dt){S4.t+=dt;const m=S.m4,d=S.d4,vi=S.vi4,md=S.md4;const g=$("#v4
   if(md==="lift"||md==="lower"){E("path",{d:`M200,${by+2} q20,14 40,0`,stroke:"var(--copper)","stroke-width":8,fill:"none","stroke-linecap":"round"},g);farrow(g,186,by-12,0,-m*G0*2-10,"var(--copper)","F = mg",-62,0)}
   txt(g,300,30,"y = "+fx(y,2)+" m",{"font-size":13,"font-weight":700})}
 
-/* 5. spring work */
-(function(){const c=$("#c5");slider(c,{id:"k5",key:"kk",min:10,max:200,step:5,value:100,fmt:v=>v+" N/m",on:u5});slider(c,{id:"xi5",key:"xi5",min:-0.5,max:0.5,step:0.01,value:0.1,fmt:v=>minus(v.toFixed(2))+" m",on:u5});
-  slider(c,{id:"xf5",key:"xf5",min:-0.5,max:0.5,step:0.01,value:0.4,fmt:v=>minus(v.toFixed(2))+" m",on:u5});S.ro5=readout(c,[["fi","rFi"],["ff","rFf"],["w","rWs"],["m","rMean"]]);})();
-function u5(){const k=S.k5,xi=S.xi5,xf=S.xf5;const W=0.5*k*(xi*xi-xf*xf);const g=$("#v5");g.innerHTML="";const X=x=>220+x*300;
+/* 5. spring work (animated: real motion under the spring force alone) */
+const S5={t:0,playing:!reduceMotion,SLOW:0.1};
+(function(){const c=$("#c5");slider(c,{id:"k5",key:"kk",min:10,max:200,step:5,value:100,fmt:v=>v+" N/m",on:u5});slider(c,{id:"m5",key:"mass",min:0.5,max:5,step:0.5,value:1,fmt:v=>v.toFixed(1)+" kg",on:u5});slider(c,{id:"xi5",key:"xi5",min:-0.5,max:0.5,step:0.01,value:0.1,fmt:v=>minus(v.toFixed(2))+" m",on:u5});
+  slider(c,{id:"xf5",key:"xf5",min:-0.5,max:0.5,step:0.01,value:0.4,fmt:v=>minus(v.toFixed(2))+" m",on:u5});
+  const br=H("div",{class:"btnrow"},c);playBtn(br,S5);S5._btn();button(br,"reset",()=>{S5.t=0});
+  S.ro5=readout(c,[["fi","rFi"],["ff","rFf"],["w","rWs"],["m","rMean"]]);S.ro5b=readout(c,[["x","rX5"],["v","rV5"],["k","rK5"],["wn","wSoFar"]]);})();
+/* Energy is chosen so the trip is a real, spring-only motion: moving away from x = 0 the block is launched at x_i
+   and comes to rest exactly at x_f; moving toward x = 0 it is released from rest at x_i. Amplitude A = max(|x_i|,|x_f|). */
+function info5(){const k=S.k5,m=S.m5,xi=S.xi5,xf=S.xf5,A=Math.max(Math.abs(xi),Math.abs(xf)),w=Math.sqrt(k/m);
+  const ac=v=>Math.acos(Math.max(-1,Math.min(1,A>0?v/A:1)));const dir=Math.sign(xf-xi);
+  const th0=dir>0?-ac(xi):ac(xi),th1=dir>0?-ac(xf):ac(xf);const T=dir===0?0:Math.abs(th1-th0)/w;
+  return{k,m,xi,xf,A,w,dir,th0,th1,T,W:0.5*k*(xi*xi-xf*xf)}}
+function u5(){S5.t=0;const I=info5();const ro=S.ro5;ro.fi.textContent=fx(-I.k*I.xi,1)+" N";ro.ff.textContent=fx(-I.k*I.xf,1)+" N";ro.w.textContent=J(I.W);ro.m.textContent=t(Math.abs(I.W)<1e-9?"same":I.W<0?"slower":"faster")}
+function draw5(dt){const I=info5();const k=I.k;if(S5.playing)S5.t+=dt;const HOLD0=0.7,HOLD1=1.4;const Tp=I.T/S5.SLOW;if(S5.t>HOLD0+Tp+HOLD1)S5.t=0;
+  const tr=Math.max(0,Math.min(Tp,S5.t-HOLD0))*S5.SLOW;let x,v;if(I.dir===0){x=I.xi;v=0}else{const th=I.th0+Math.sign(I.th1-I.th0)*I.w*tr;x=I.A*Math.cos(th);v=-I.A*I.w*Math.sin(th)*Math.sign(I.th1-I.th0);if(tr>=I.T-1e-9){x=I.xf}}
+  const Wn=0.5*k*(I.xi*I.xi-x*x),K=0.5*I.m*v*v;
+  const g=$("#v5");g.innerHTML="";const X=x=>220+x*300;
   E("line",{x1:20,x2:20,y1:20,y2:80,stroke:"var(--ink)","stroke-width":4},g);E("line",{x1:20,x2:430,y1:80,y2:80,stroke:"var(--ink)","stroke-width":2},g);E("line",{x1:X(0),x2:X(0),y1:80,y2:92,stroke:"var(--muted)"},g);txt(g,X(0),104,"x = 0",{"text-anchor":"middle","font-size":11,fill:"var(--muted)"});
-  E("rect",{x:X(xi)-20,y:42,width:40,height:38,rx:4,fill:"none",stroke:"var(--muted)","stroke-dasharray":"4 3"},g);spring(g,20,X(xf)-20,61);block(g,X(xf)-20,42,40,38,"var(--blue)","m");farrow(g,X(xf),30,-k*xf*0.8,0,"var(--red)","F_s",4,-4);
+  [[I.xi,"x_i"],[I.xf,"x_f"]].forEach(([p,lab])=>{E("rect",{x:X(p)-20,y:42,width:40,height:38,rx:4,fill:"none",stroke:"var(--muted)","stroke-dasharray":"4 3",opacity:.8},g);E("line",{x1:X(p),x2:X(p),y1:80,y2:88,stroke:"var(--muted)"},g);txt(g,X(p),100,lab,{"text-anchor":"middle","font-size":11,fill:"var(--muted)"})});
+  spring(g,20,X(x)-20,61);block(g,X(x)-20,42,40,38,"var(--blue)","m");farrow(g,X(x),30,-k*x*0.8,0,"var(--red)","F_s",4,-4);if(Math.abs(v)>0.02)farrow(g,X(x),11,v*12,0,"var(--green)","v",4,4);
+  txt(g,430,120,t("slow5"),{"text-anchor":"end","font-size":11,fill:"var(--muted)"});
   const Fm=0.5*200;const G=graph(g,{l:60,r:420,t0:130,b:280,xmin:-0.5,xmax:0.5,ymin:-Fm,ymax:Fm,xt:[[-0.5,"−0.5"],[0,"0"],[0.5,"0.5 m"]],yt:[[-Fm,"−100"],[0,"0"],[Fm,"100 N"]],yl:t("gF5")});
-  E("polygon",{points:`${G.X(xi)},${G.Y(0)} ${G.X(xi)},${G.Y(-k*xi)} ${G.X(xf)},${G.Y(-k*xf)} ${G.X(xf)},${G.Y(0)}`,fill:W>=0?"var(--green)":"var(--red)",opacity:.3},g);
-  E("line",{x1:G.X(-0.5),y1:G.Y(k*0.5),x2:G.X(0.5),y2:G.Y(-k*0.5),stroke:"var(--blue)","stroke-width":2.5},g);arrow(g,G.X(xi),G.Y(0)+12,G.X(xf),G.Y(0)+12,"var(--magenta)",2,7);
-  const ro=S.ro5;ro.fi.textContent=fx(-k*xi,1)+" N";ro.ff.textContent=fx(-k*xf,1)+" N";ro.w.textContent=J(W);ro.m.textContent=t(Math.abs(W)<1e-9?"same":W<0?"slower":"faster")}
+  E("polygon",{points:`${G.X(I.xi)},${G.Y(0)} ${G.X(I.xi)},${G.Y(-k*I.xi)} ${G.X(I.xf)},${G.Y(-k*I.xf)} ${G.X(I.xf)},${G.Y(0)}`,fill:"none",stroke:I.W>=0?"var(--green)":"var(--red)","stroke-dasharray":"3 3",opacity:.6},g);
+  E("polygon",{points:`${G.X(I.xi)},${G.Y(0)} ${G.X(I.xi)},${G.Y(-k*I.xi)} ${G.X(x)},${G.Y(-k*x)} ${G.X(x)},${G.Y(0)}`,fill:I.W>=0?"var(--green)":"var(--red)",opacity:.3},g);
+  E("line",{x1:G.X(-0.5),y1:G.Y(k*0.5),x2:G.X(0.5),y2:G.Y(-k*0.5),stroke:"var(--blue)","stroke-width":2.5},g);arrow(g,G.X(I.xi),G.Y(0)+12,G.X(I.xf),G.Y(0)+12,"var(--magenta)",2,7);
+  E("line",{x1:G.X(x),x2:G.X(x),y1:G.Y(0),y2:G.Y(-k*x),stroke:"var(--red)","stroke-width":1.5},g);E("circle",{cx:G.X(x),cy:G.Y(-k*x),r:5,fill:"var(--red)",stroke:"var(--panel)","stroke-width":2},g);
+  const rb=S.ro5b;rb.x.textContent=fx(x,2)+" m";rb.v.textContent=fx(Math.abs(v),2)+" m/s";rb.k.textContent=J(K);rb.wn.textContent=J(Wn)}
 
 /* 6. power */
 const S6={t:0};
@@ -506,7 +523,7 @@ function draw11(dt){const I=info11();S11.t+=dt*0.7;let tt=S11.t;let x=I.v0*tt+0.
 /* loop */
 function applyText(){document.querySelectorAll("[data-i18n]").forEach(el=>{el.innerHTML=t(el.dataset.i18n)})}
 let last=performance.now();
-function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;NOW+=dt;anims.forEach(f=>f(dt));draw3(dt);draw4(dt);draw6(dt);draw8(dt);draw9(dt);draw10(dt);draw11(dt);requestAnimationFrame(frame)}
+function frame(now){const dt=Math.min(0.05,(now-last)/1000);last=now;NOW+=dt;anims.forEach(f=>f(dt));draw3(dt);draw4(dt);draw5(dt);draw6(dt);draw8(dt);draw9(dt);draw10(dt);draw11(dt);requestAnimationFrame(frame)}
 applyText();u1();u2();u3();u4();u5();u6();u7();u11();requestAnimationFrame(frame);
 </script>
 </body>
