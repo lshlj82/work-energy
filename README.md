@@ -54,7 +54,7 @@ The eleven sections follow the order of the lecture notes. Every value is recomp
 - **Gravity:** The page uses $g = 9.8\ \text{m/s}^2$.
 - **Path comparison:** The two paths in section 7 use $m = 1\ \text{kg}$, and the friction case uses $\mu_k = 0.5$.
 - **Time scale:** Some animations are slowed down so the motion is easy to follow, but every readout shows the real values.
-- **Light and dark:** The page follows the system's light or dark setting.
+- **Light and dark:** The page follows the system's light or dark setting, and a sun/moon button in the top-right corner switches by hand, and the choice is remembered across pages.
 - **Reduced motion:** If `prefers-reduced-motion` is set, the header animation stays still.
 
 ## Credits
